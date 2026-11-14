@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { appUrl } from '../lib/url'
 import { ErrorText, Field } from '../components/ui'
 import AuthHero from './AuthHero'
 
@@ -24,7 +25,7 @@ export default function Login() {
 
   const forgot = async () => {
     if (!email.trim()) return setError('Enter your email first, then click "Forgot password".')
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: window.location.origin })
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: appUrl('/') })
     if (error) setError(error.message)
     else setInfo('Check your inbox for a password reset link.')
   }

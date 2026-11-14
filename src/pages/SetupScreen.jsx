@@ -11,6 +11,10 @@ export default function SetupScreen() {
         </ol>
         <pre>{`VITE_SUPABASE_URL=https://xxxx.supabase.co\nVITE_SUPABASE_ANON_KEY=eyJhbGciOi...`}</pre>
         <p className="mt-12">Then restart <code>npm run dev</code>.</p>
+        <div className="divider" />
+        <p><b>Seeing this on the published site?</b> The build ran without the Supabase keys. On GitHub, open the repo's
+          <b> Settings → Secrets and variables → Actions</b> and add <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code>,
+          then re-run <b>Actions → Deploy to GitHub Pages</b>. On Vercel or Netlify, add them as environment variables and redeploy.</p>
       </div>
     </div>
   )

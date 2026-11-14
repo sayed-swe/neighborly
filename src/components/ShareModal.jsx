@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link2, Repeat2, Send } from 'lucide-react'
 import { getConversations, sendMessage, sharePost } from '../lib/api'
+import { appUrl } from '../lib/url'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Avatar, Modal } from './ui'
@@ -13,7 +14,7 @@ export default function ShareModal({ post, onClose, onShared }) {
   const [busy, setBusy] = useState(false)
   const [convos, setConvos] = useState([])
   const [sentTo, setSentTo] = useState({})
-  const link = `${window.location.origin}/post/${original.id}`
+  const link = appUrl(`/post/${original.id}`)
 
   useEffect(() => { getConversations().then(setConvos).catch(() => {}) }, [])
 

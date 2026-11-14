@@ -59,8 +59,20 @@ npm install
 npm run dev               # http://localhost:5173
 ```
 
-### 3. Deploy (Vercel / Netlify)
-Build command `npm run build`, output `dist`, add the two `VITE_SUPABASE_*` env vars. Add a SPA rewrite (all routes → `/index.html`). In Supabase **Authentication → URL Configuration**, add your site URL.
+### 3. Publish
+
+The repo is a Vite app: it has to be **built** before it can be served. Opening the repo on GitHub or turning on Pages from a branch gives a blank page.
+
+**Option A — GitHub Pages (automatic, from this repo)**
+1. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions** (owner/admin only).
+2. Repo **Settings → Secrets and variables → Actions → New repository secret**: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+3. Push to `main` (or **Actions → Deploy to GitHub Pages → Run workflow**). The site goes live at `https://<owner>.github.io/<repo>/`.
+4. In Supabase **Authentication → URL Configuration**, set the Site URL to that address.
+
+The workflow (`.github/workflows/deploy.yml`) sets the `/<repo>/` base path and copies `index.html` to `404.html`, so deep links like `/post/12` survive a refresh.
+
+**Option B — Vercel or Netlify (import the GitHub repo)**
+Framework preset **Vite**, build command `npm run build`, output `dist`, plus the two `VITE_SUPABASE_*` environment variables. SPA rewrites are already included (`vercel.json`, `public/_redirects`). Vercel can only import repos your GitHub account can access. If the repo belongs to a teammate, ask them to import it, or add you as a collaborator first.
 
 ---
 

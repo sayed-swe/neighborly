@@ -6,6 +6,7 @@ import {
   getConversationMembers, getConversations, getMessages, markConversationRead, searchPeople, sendMessage, startConversation,
 } from '../lib/api'
 import { timeAgo } from '../lib/format'
+import { appUrl } from '../lib/url'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Avatar, Empty, Modal, Spinner } from '../components/ui'
@@ -129,7 +130,9 @@ function Thread({ conversationId, onActivity }) {
             {m.showTime && <div className="bubble-time">{new Date(m.created_at).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</div>}
             <div className={`bubble ${m.sender_id === profile.id ? 'mine' : ''}`}>
               {m.body.split(/(https?:\/\/\S+)/g).map((part, i) => (/^https?:\/\//.test(part)
-                ? <a key={i} href={part} style={{ textDecoration: 'underline' }}>{part.replace(window.location.origin, '')}</a>
+                ? (part.startsWith(appUrl(''))
+                  ? <Link key={i} to={part.slice(appUrl('').length - 1) || '/'} style={{ textDecoration: 'underline' }}>{part.slice(appUrl('').length - 1)}</Link>
+                  : <a key={i} href={part} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>{part}</a>)
                 : part))}
             </div>
           </div>

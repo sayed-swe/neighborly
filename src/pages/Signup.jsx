@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { getNeighborhoods } from '../lib/api'
+import { appUrl } from '../lib/url'
 import { ErrorText, Field } from '../components/ui'
 import AuthHero from './AuthHero'
 
@@ -27,7 +28,7 @@ export default function Signup() {
       email: form.email.trim(),
       password: form.password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: appUrl('/'),
         data: {
           full_name: form.full_name.trim(),
           username,

@@ -6,6 +6,7 @@ import {
 import { deletePost, getReactors, setReaction } from '../lib/api'
 import { REACTIONS, reactionOf } from '../lib/constants'
 import { compactNumber, formatDateTime, timeAgo } from '../lib/format'
+import { appUrl } from '../lib/url'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Avatar, Dropdown, Modal, Spinner } from './ui'
@@ -51,7 +52,7 @@ export default function PostCard({ post: initial, onDeleted, onChanged, defaultC
   }
 
   const copyLink = async () => {
-    const url = `${window.location.origin}/post/${post.id}`
+    const url = appUrl(`/post/${post.id}`)
     try { await navigator.clipboard.writeText(url); toast('Link copied') } catch { toast(url) }
   }
 

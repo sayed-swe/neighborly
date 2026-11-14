@@ -12,7 +12,7 @@ import { ToastProvider } from './context/ToastContext'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {isConfigured ? (
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
         <ToastProvider>
           <AuthProvider>
             <App />
