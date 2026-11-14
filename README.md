@@ -44,6 +44,7 @@ Moderators can do everything except change roles. Security is enforced in the da
 2. In **SQL Editor**, run these files in order:
    - `supabase/migrations/20261114000001_schema.sql` — tables, enums, RLS, triggers, views, RPCs
    - `supabase/migrations/20261114000002_storage_and_lookups.sql` — `media` storage bucket + neighborhoods & categories
+   - `supabase/migrations/20261114000003_lock_internal_functions.sql` and `…000004_neighborhood_fk_indexes.sql`
    - *(optional)* `supabase/seed_demo.sql` — demo users, posts, listings, events… (logins are listed at the top of the file)
 3. Make yourself admin after you sign up:
    ```sql
@@ -65,7 +66,7 @@ The repo is a Vite app: it has to be **built** before it can be served. Opening 
 
 **Option A — GitHub Pages (automatic, from this repo)**
 1. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions** (owner/admin only).
-2. Repo **Settings → Secrets and variables → Actions → New repository secret**: add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+2. Supabase settings for production builds are in `.env.production` (public URL + anon key — safe to commit, data is protected by RLS). To point at a different project, edit that file or add repo secrets `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`, which override it.
 3. Push to `main` (or **Actions → Deploy to GitHub Pages → Run workflow**). The site goes live at `https://<owner>.github.io/<repo>/`.
 4. In Supabase **Authentication → URL Configuration**, set the Site URL to that address.
 

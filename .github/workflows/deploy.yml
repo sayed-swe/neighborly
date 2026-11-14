@@ -1,7 +1,7 @@
 # Builds the Vite app and publishes it to GitHub Pages on every push to main.
-# One-time setup (repo owner): Settings -> Pages -> Source: "GitHub Actions"
-# and Settings -> Secrets and variables -> Actions -> add
-#   VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+# One-time setup (repo owner): Settings -> Pages -> Source: "GitHub Actions".
+# Supabase settings come from .env.production; optional repo secrets
+# VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY override them.
 name: Deploy to GitHub Pages
 
 on:
@@ -34,9 +34,13 @@ jobs:
       - name: Build
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: npm run build
+          SECRET_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SECRET_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        # Uses .env.production by default; repo secrets override it when set.
+        run: |
+          if [ -n "$SECRET_URL" ]; then export VITE_SUPABASE_URL="$SECRET_URL"; fi
+          if [ -n "$SECRET_KEY" ]; then export VITE_SUPABASE_ANON_KEY="$SECRET_KEY"; fi
+          npm run build
 
       # GitHub Pages has no SPA rewrites: serve the app for unknown paths too,
       # so links like /neighborly/post/12 work on refresh.
