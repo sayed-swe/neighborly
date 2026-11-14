@@ -3,16 +3,15 @@ import { useSearchParams } from 'react-router-dom'
 import { LocateFixed, Search, X } from 'lucide-react'
 import { getNeighborhoods, getPostCategories, searchPeople } from '../lib/api'
 import { getCurrentPosition } from '../lib/geo'
-import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { ComposerBox } from '../components/Composer'
 import FeedList from '../components/FeedList'
 import { Avatar } from '../components/ui'
 import { Link } from 'react-router-dom'
-import { RightRail } from './Home'
+import LeftNav from '../components/LeftNav'
+import RightRail from '../components/RightRail'
 
 export default function Feed() {
-  const { profile } = useAuth()
   const toast = useToast()
   const [params, setParams] = useSearchParams()
   const q = params.get('q') || ''
@@ -50,8 +49,9 @@ export default function Feed() {
   }
 
   return (
-    <div className="page">
-      <div className="with-rail">
+    <div className="fb-layout">
+      <LeftNav />
+      <main className="fb-center">
         <div className="feed-col">
           <div className="card card-pad">
             <form className="toolbar" style={{ marginBottom: 12 }} onSubmit={(e) => { e.preventDefault(); setParams(search.trim() ? { q: search.trim() } : {}) }}>
@@ -100,8 +100,8 @@ export default function Feed() {
           <FeedList filters={filters} reloadKey={reloadKey}
             emptyText={near ? 'No pinned posts near you yet. Add a location when you post so neighbors can find it.' : q ? `No posts match "${q}".` : undefined} />
         </div>
-        {profile && <RightRail />}
-      </div>
+      </main>
+      <RightRail />
     </div>
   )
 }

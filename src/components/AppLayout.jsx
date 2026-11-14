@@ -4,14 +4,12 @@ import { supabase } from '../lib/supabase'
 import { countUnreadNotifications, getAlerts, getConversations } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
-import Sidebar from './Sidebar'
-import Topbar from './Topbar'
+import Header from './Header'
 
 export default function AppLayout() {
   const { user } = useAuth()
   const toast = useToast()
   const location = useLocation()
-  const [menuOpen, setMenuOpen] = useState(false)
   const [counts, setCounts] = useState({ notifications: 0, messages: 0, alerts: 0 })
 
   const refreshCounts = useCallback(async () => {
@@ -32,7 +30,7 @@ export default function AppLayout() {
   }, [])
 
   useEffect(() => { refreshCounts() }, [refreshCounts, location.pathname])
-  useEffect(() => { setMenuOpen(false) }, [location.pathname])
+  useEffect(() => { window.scrollTo(0, 0) }, [location.pathname])
 
   // Live updates: new notifications and messages
   useEffect(() => {
@@ -50,10 +48,8 @@ export default function AppLayout() {
 
   return (
     <div className="app-shell">
-      <Sidebar open={menuOpen} counts={counts} />
-      <div className={`scrim ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
-      <div className="main-area">
-        <Topbar counts={counts} onMenu={() => setMenuOpen(true)} />
+      <Header counts={counts} refreshCounts={refreshCounts} />
+      <div className="app-body">
         <Outlet context={{ refreshCounts, counts }} />
       </div>
     </div>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { MapPin, Plus, Search, Tag, Trash2 } from 'lucide-react'
+import {
+  Baby, BookOpen, Car, CookingPot, Dumbbell, Gift, MapPin, Package, Plus, Repeat2, Search, Shirt, Smartphone, Sofa, Store, Tag, Trash2,
+} from 'lucide-react'
 import { createListing, deleteListing, getListing, getListings, updateListing, uploadImage } from '../lib/api'
 import { CONDITIONS, LISTING_CATEGORIES, LISTING_TYPES } from '../lib/constants'
 import { formatPrice, labelize, timeAgo } from '../lib/format'
@@ -10,6 +12,12 @@ import { Empty, ErrorText, Field, Modal, Spinner, StatusPill } from '../componen
 import { ImagePicker, LocationField } from '../components/FormBits'
 import CommentSection from '../components/CommentSection'
 import OwnerBar from '../components/OwnerBar'
+
+const TYPE_ICONS = { '': Store, sell: Tag, buy: Search, exchange: Repeat2, free: Gift }
+const CATEGORY_ICONS = {
+  Electronics: Smartphone, Furniture: Sofa, Vehicles: Car, Books: BookOpen, Clothing: Shirt,
+  'Home & Kitchen': CookingPot, Kids: Baby, Sports: Dumbbell, Other: Package,
+}
 
 export default function Marketplace() {
   const [params, setParams] = useSearchParams()
@@ -24,43 +32,66 @@ export default function Marketplace() {
   const load = () => getListings({ type: type || undefined, category: category || undefined, search: q || undefined }).then(setItems).catch(() => setItems([]))
   useEffect(() => { setItems(null); load() }, [type, category, q]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <div className="page">
-      <div className="page-head">
-        <div><h2>Buy & sell</h2><p>Second-hand deals, giveaways and swaps from people who live near you.</p></div>
-        <button className="btn btn-primary" onClick={() => setCreating(true)}><Plus size={18} /> Create listing</button>
-      </div>
-      <form className="toolbar" onSubmit={(e) => { e.preventDefault(); setQ(search.trim()) }}>
-        <div className="search"><Search size={18} color="var(--muted)" /><input placeholder="Search marketplace" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
-        <select className="select" style={{ width: 'auto' }} value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option value="">All categories</option>
-          {LISTING_CATEGORIES.map((c) => <option key={c}>{c}</option>)}
-        </select>
-        <div className="chips">
-          <button type="button" className={`chip ${!type ? 'active' : ''}`} onClick={() => setType('')}>All</button>
-          {LISTING_TYPES.map((t) => <button type="button" key={t} className={`chip ${type === t ? 'active' : ''}`} onClick={() => setType(t)}>{t === 'buy' ? 'Wanted' : labelize(t)}</button>)}
-        </div>
-      </form>
+  const typeLabel = { '': 'Browse all', sell: 'For sale', buy: 'Wanted', exchange: 'Exchange', free: 'Free stuff' }
+  const heading = category || (type ? typeLabel[type] : "Today's picks")
 
-      {items === null ? <Spinner /> : items.length === 0 ? (
-        <div className="card"><Empty icon={Tag} title="No listings yet" text="Selling something or giving it away? List it for your neighbors." action={<button className="btn btn-primary" onClick={() => setCreating(true)}>Create listing</button>} /></div>
-      ) : (
-        <div className="grid-cards">
-          {items.map((l) => (
-            <div key={l.id} className="card item-card" onClick={() => setParams({ item: l.id })}>
-              <div className="item-thumb">
-                {l.image_url ? <img src={l.image_url} alt="" loading="lazy" /> : <Tag size={34} />}
-                {l.listing_type !== 'sell' && <span className="pill dark">{l.listing_type === 'buy' ? 'Wanted' : labelize(l.listing_type)}</span>}
-              </div>
-              <div className="item-info">
-                <div className="item-price">{formatPrice(l.price, l.listing_type)}</div>
-                <div className="item-title">{l.title}</div>
-                <div className="item-sub"><MapPin size={13} /> {l.location_name || l.neighborhood?.name || 'Nearby'} · {timeAgo(l.created_at)}</div>
-              </div>
-            </div>
-          ))}
+  return (
+    <div className="mp-layout">
+      <aside className="mp-side">
+        <h2>Buy & sell</h2>
+        <form className="fb-search" onSubmit={(e) => { e.preventDefault(); setQ(search.trim()) }}>
+          <Search size={16} color="var(--muted)" />
+          <input placeholder="Search Marketplace" value={search} onChange={(e) => setSearch(e.target.value)} />
+        </form>
+        {Object.entries(typeLabel).map(([t, label]) => {
+          const Icon = TYPE_ICONS[t]
+          return (
+            <button key={label} className={`mp-cat ${type === t && !category ? 'active' : ''}`} onClick={() => { setType(t); setCategory('') }}>
+              <span className="ic"><Icon size={18} /></span>{label}
+            </button>
+          )
+        })}
+        <div style={{ padding: '8px' }}>
+          <button className="btn btn-primary btn-block" style={{ background: 'var(--green-100)', color: 'var(--green-700)' }} onClick={() => setCreating(true)}><Plus size={18} /> Create new listing</button>
         </div>
-      )}
+        <div className="side-sep" />
+        <div className="side-title">Categories</div>
+        {LISTING_CATEGORIES.map((c) => {
+          const Icon = CATEGORY_ICONS[c] || Package
+          return (
+            <button key={c} className={`mp-cat ${category === c ? 'active' : ''}`} onClick={() => { setCategory(category === c ? '' : c); setType('') }}>
+              <span className="ic"><Icon size={18} /></span>{c}
+            </button>
+          )
+        })}
+      </aside>
+
+      <main className="mp-main">
+        <div className="flex between items-center wrap gap-8" style={{ marginBottom: 12 }}>
+          <h3 style={{ margin: 0 }}>{q ? `Results for "${q}"` : heading}</h3>
+          {(q || category || type) && <button className="btn btn-secondary btn-sm" onClick={() => { setQ(''); setSearch(''); setCategory(''); setType('') }}>Clear filters</button>}
+        </div>
+
+        {items === null ? <Spinner /> : items.length === 0 ? (
+          <div className="card"><Empty icon={Tag} title="No listings yet" text="Selling something or giving it away? List it for your neighbors." action={<button className="btn btn-primary" onClick={() => setCreating(true)}>Create listing</button>} /></div>
+        ) : (
+          <div className="grid-cards">
+            {items.map((l) => (
+              <div key={l.id} className="item-card" onClick={() => setParams({ item: l.id })}>
+                <div className="item-thumb">
+                  {l.image_url ? <img src={l.image_url} alt="" loading="lazy" /> : <Tag size={40} />}
+                  {l.listing_type !== 'sell' && <span className="pill dark">{l.listing_type === 'buy' ? 'Wanted' : labelize(l.listing_type)}</span>}
+                </div>
+                <div className="item-info">
+                  <div className="item-price">{formatPrice(l.price, l.listing_type)}</div>
+                  <div className="item-title">{l.title}</div>
+                  <div className="item-sub">{l.location_name || l.neighborhood?.name || 'Nearby'} · {timeAgo(l.created_at)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
 
       {creating && <ListingForm onClose={() => setCreating(false)} onSaved={() => { setCreating(false); load() }} />}
       {openId && <ListingDetail id={Number(openId)} onClose={() => setParams({})} onChanged={load} />}

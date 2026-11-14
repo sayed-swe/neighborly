@@ -40,36 +40,39 @@ export default function Profile() {
 
   return (
     <div>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div className="profile-cover">{person.cover_url && <img src={person.cover_url} alt="" />}</div>
-        <div className="profile-head">
-          <Avatar src={person.avatar_url} name={person.full_name} size={150} />
-          <div className="grow">
-            <h2>{person.full_name}</h2>
-            <div className="muted">@{person.username}
-              {person.role !== 'resident' && <span className={`pill ${person.role === 'admin' ? 'green' : 'blue'}`} style={{ marginLeft: 8 }}>{labelize(person.role)}</span>}
+      <div className="profile-top">
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div className="profile-cover">{person.cover_url && <img src={person.cover_url} alt="" />}</div>
+          <div className="profile-head">
+            <Avatar src={person.avatar_url} name={person.full_name} size={168} />
+            <div className="grow">
+              <h2>{person.full_name}</h2>
+              <div className="muted bold">@{person.username}{person.neighborhood ? ` · ${person.neighborhood.name}` : ''}
+                {person.role !== 'resident' && <span className={`pill ${person.role === 'admin' ? 'green' : 'blue'}`} style={{ marginLeft: 8 }}>{labelize(person.role)}</span>}
+              </div>
+            </div>
+            <div className="profile-actions">
+              {isMe ? (
+                <>
+                  <button className="btn btn-primary" onClick={() => setModal('edit')}><Pencil size={17} /> Edit profile</button>
+                </>
+              ) : (
+                <>
+                  <button className="btn btn-primary" onClick={message}><MessageCircle size={17} /> Message</button>
+                  <button className="btn btn-secondary" onClick={() => setModal('report')} aria-label="Report"><Flag size={17} /></button>
+                </>
+              )}
             </div>
           </div>
-          <div className="profile-actions">
-            {isMe ? (
-              <button className="btn btn-secondary" onClick={() => setModal('edit')}><Pencil size={17} /> Edit profile</button>
-            ) : (
-              <>
-                <button className="btn btn-primary" onClick={message}><MessageCircle size={17} /> Message</button>
-                <button className="btn btn-secondary" onClick={() => setModal('report')} aria-label="Report"><Flag size={17} /></button>
-              </>
-            )}
+          <div className="profile-tabs">
+            <button className={`tab ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>Posts</button>
+            <button className={`tab ${tab === 'about' ? 'active' : ''}`} onClick={() => setTab('about')}>About</button>
+            <button className={`tab ${tab === 'listings' ? 'active' : ''}`} onClick={() => setTab('listings')}>Listings</button>
           </div>
         </div>
       </div>
 
-      <div className="page" style={{ paddingTop: 16 }}>
-        <div className="tabs">
-          <button className={`tab ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>Posts</button>
-          <button className={`tab ${tab === 'listings' ? 'active' : ''}`} onClick={() => setTab('listings')}>Listings</button>
-          <button className={`tab ${tab === 'about' ? 'active' : ''}`} onClick={() => setTab('about')}>About</button>
-        </div>
-
+      <div className="page" style={{ paddingTop: 16, maxWidth: 1000 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 340px) minmax(0, 1fr)', gap: 20, alignItems: 'start' }} className="profile-grid">
           <div className="card card-pad">
             <div className="card-title mb-12">Intro</div>
