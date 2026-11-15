@@ -102,8 +102,13 @@ private fun MainShell(me: Profile, vm: RootViewModel) {
     val badges by vm.badges.collectAsStateWithLifecycle()
     val entry by nav.currentBackStackEntryAsState()
     val onTab = tabs.any { entry?.destination?.hasRoute(it.cls) == true }
+    val snackbar = androidx.compose.runtime.remember { androidx.compose.material3.SnackbarHostState() }
 
+    androidx.compose.runtime.CompositionLocalProvider(com.neighborly.app.core.designsystem.LocalSnackbar provides snackbar) {
     Scaffold(
+        // Inner screens own their insets (their own Scaffolds); tab chrome handles its own.
+        contentWindowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0),
+        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbar) },
         topBar = {
             if (onTab) {
                 TopAppBar(
@@ -151,6 +156,7 @@ private fun MainShell(me: Profile, vm: RootViewModel) {
         Column(Modifier.padding(padding).fillMaxSize()) {
             NeighborlyNavHost(nav, me, vm)
         }
+    }
     }
 }
 

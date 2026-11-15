@@ -134,6 +134,8 @@ fun ProfileScreen(
     onEdit: () -> Unit,
     onOpenChat: (Long, String) -> Unit,
     extraContent: LazyListScope.(userId: String) -> Unit = {},
+    onUserLoaded: (String) -> Unit = {},
+    overlay: @Composable () -> Unit = {},
     vm: ProfileViewModel = hiltViewModel(),
 ) {
     val s by vm.state.collectAsStateWithLifecycle()
@@ -148,6 +150,7 @@ fun ProfileScreen(
     }) { padding ->
         Box(Modifier.padding(padding).fillMaxSize().background(MaterialTheme.colorScheme.background)) {
             LoadContent(s.profile, onRetry = { vm.load() }) { p ->
+                androidx.compose.runtime.LaunchedEffect(p.id) { onUserLoaded(p.id) }
                 Refreshable(s.refreshing, { vm.load(refresh = true) }) {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         item {
@@ -164,6 +167,7 @@ fun ProfileScreen(
                 }
                 if (reporting) ReportSheet(ReportTarget.USER, p.id, onDismiss = { reporting = false })
             }
+            overlay()
         }
     }
 }
