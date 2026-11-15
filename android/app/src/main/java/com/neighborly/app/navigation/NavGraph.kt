@@ -46,6 +46,8 @@ import com.neighborly.app.feature.services.ServiceEditScreen
 import com.neighborly.app.feature.services.ServicesScreen
 import androidx.navigation.toRoute
 import com.neighborly.app.feature.map.MapScreen
+import com.neighborly.app.feature.moderation.ModerationScreen
+import com.neighborly.app.feature.moderation.ReportReviewScreen
 import com.neighborly.app.feature.alerts.AlertCreateScreen
 import com.neighborly.app.feature.alerts.AlertsScreen
 import com.neighborly.app.feature.alerts.NotificationsScreen
@@ -195,6 +197,20 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
             )
         }
         composable<EditProfileRoute> { EditProfileScreen(onBack = { nav.popBackStack() }) }
+        composable<ModerationRoute> {
+            ModerationScreen(onBack = { nav.popBackStack() }, onReview = { nav.navigate(ReportReviewRoute(it)) })
+        }
+        composable<ReportReviewRoute> {
+            ReportReviewScreen(
+                onBack = { nav.popBackStack() },
+                onDone = {
+                    nav.popBackStack()
+                    nav.currentBackStackEntry?.savedStateHandle?.set("refresh", true)
+                },
+                onOpen = { nav.navigate(it) },
+                onOpenProfile = postNav.openProfile,
+            )
+        }
     }
 }
 
