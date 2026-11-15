@@ -182,4 +182,99 @@
     <string name="search_empty">No posts match</string>
     <string name="radius_km">%1$d km</string>
     <string name="filter_all_categories">All categories</string>
+    <string name="filter_all">All</string>
+    <string name="action_next">Next</string>
+    <string name="action_done">Done</string>
+    <string name="not_specified">Not specified</string>
+    <string name="questions_title">Questions</string>
+
+    <!-- Form fields -->
+    <string name="field_title">Title</string>
+    <string name="field_description">Description</string>
+    <string name="field_category">Category</string>
+    <string name="field_condition">Condition</string>
+    <string name="field_price">Price (৳)</string>
+    <string name="hint_price">Leave empty to ask for offers</string>
+    <string name="field_contact">Contact info (optional)</string>
+
+    <!-- Buy & sell -->
+    <string name="market_search">Search Buy &amp; sell</string>
+    <string name="market_sell">Sell something</string>
+    <string name="market_empty">No listings match</string>
+    <string name="listing_new">New listing</string>
+    <string name="listing_edit">Edit listing</string>
+    <string name="listing_type">Listing type</string>
+    <string name="listing_type_sell">For sale</string>
+    <string name="listing_type_buy">Wanted</string>
+    <string name="listing_type_exchange">Exchange</string>
+    <string name="listing_type_free">Free</string>
+    <string name="listing_seller">Seller</string>
+    <string name="listing_message_seller">Message seller</string>
+    <string name="listing_status">Listing status</string>
+    <string name="listing_contact">Contact: %1$s</string>
+
+    <!-- Lost & found -->
+    <string name="lf_lost">Lost</string>
+    <string name="lf_found">Found</string>
+    <string name="lf_report">Report an item</string>
+    <string name="lf_edit">Edit report</string>
+    <string name="lf_empty">Nothing reported here</string>
+    <string name="lf_show_reunited">Show reunited</string>
+    <string name="lf_mark_reunited">Mark as reunited</string>
+    <string name="lf_date">On %1$s</string>
+    <string name="lf_i_lost">I lost something</string>
+    <string name="lf_i_found">I found something</string>
+    <string name="lf_item_name">What is it?</string>
+    <string name="lf_when">When (optional)</string>
+    <string name="lf_where">Where?</string>
+
+    <!-- Events -->
+    <string name="events_upcoming">Upcoming</string>
+    <string name="events_past">Past</string>
+    <string name="events_empty">No events here yet</string>
+    <string name="events_create">Create event</string>
+    <string name="events_edit">Edit event</string>
+    <string name="events_going">Going</string>
+    <string name="events_interested">Interested</string>
+    <string name="events_going_count">%1$d going</string>
+    <string name="events_interested_count">%1$d interested</string>
+    <string name="events_you_going">You\'re going</string>
+    <string name="events_you_interested">You\'re interested</string>
+    <string name="events_capacity">Max %1$d people</string>
+    <string name="events_full">This event is full.</string>
+    <string name="events_host">Host</string>
+    <string name="events_people">Who\'s coming</string>
+    <string name="events_cancel">Cancel event</string>
+    <string name="events_cancel_title">Cancel this event?</string>
+    <string name="events_cancel_text">Everyone will see it as cancelled.</string>
+    <string name="events_starts">Starts</string>
+    <string name="events_ends">Ends (optional)</string>
+    <string name="events_dates_invalid">The end must be after the start.</string>
+    <string name="events_where">Where?</string>
+    <string name="events_max">Max participants (optional)</string>
+
+    <!-- Services & help -->
+    <string name="services_title">Services &amp; help</string>
+    <string name="services_search">Search services</string>
+    <string name="services_offer">Offer a service</string>
+    <string name="services_edit">Edit service</string>
+    <string name="services_empty">No services listed yet</string>
+    <string name="services_provider">Provider</string>
+    <string name="services_inactive">Inactive</string>
+    <string name="services_name">Service name</string>
+    <string name="services_price_info">Price info (e.g. ৳500 per visit)</string>
+    <string name="services_area">Service location (optional)</string>
+    <string name="services_active">Show in the directory</string>
+    <string name="help_ask">Ask for help</string>
+    <string name="help_active">Active</string>
+    <string name="help_resolved">Resolved</string>
+    <string name="help_empty">No help requests</string>
+    <string name="help_type">Type of help</string>
+    <string name="help_what">What do you need?</string>
+    <string name="help_offer">Offer help</string>
+    <string name="help_offer_hint">How can you help?</string>
+    <string name="help_offer_sent">Offer sent — they\'ll be notified.</string>
+    <string name="help_offers_count">%1$d offers</string>
+    <string name="help_offers_title">Offers (%1$d)</string>
+    <string name="help_update_status">Update status</string>
 </resources>

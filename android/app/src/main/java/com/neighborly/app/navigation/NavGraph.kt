@@ -30,6 +30,21 @@ import com.neighborly.app.feature.profile.EditProfileScreen
 import com.neighborly.app.feature.profile.MenuScreen
 import com.neighborly.app.feature.profile.ProfilePostsViewModel
 import com.neighborly.app.feature.profile.ProfileScreen
+import com.neighborly.app.feature.events.EventDetailScreen
+import com.neighborly.app.feature.events.EventEditScreen
+import com.neighborly.app.feature.events.EventsScreen
+import com.neighborly.app.feature.lostfound.LostFoundDetailScreen
+import com.neighborly.app.feature.lostfound.LostFoundEditScreen
+import com.neighborly.app.feature.lostfound.LostFoundListScreen
+import com.neighborly.app.feature.marketplace.ListingDetailScreen
+import com.neighborly.app.feature.marketplace.ListingEditScreen
+import com.neighborly.app.feature.marketplace.MarketScreen
+import com.neighborly.app.feature.services.HelpDetailScreen
+import com.neighborly.app.feature.services.HelpEditScreen
+import com.neighborly.app.feature.services.ServiceDetailScreen
+import com.neighborly.app.feature.services.ServiceEditScreen
+import com.neighborly.app.feature.services.ServicesScreen
+import androidx.navigation.toRoute
 
 @Composable
 fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) {
@@ -40,6 +55,7 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
             editPost = { nav.navigate(ComposerRoute(editPostId = it)) },
         )
     }
+    val openChat: (Long, String) -> Unit = remember(nav) { { id, name -> nav.navigate(ChatRoute(id, name)) } }
     NavHost(nav, startDestination = HomeRoute) {
         composable<HomeRoute> {
             HomeScreen(
@@ -49,8 +65,74 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
             )
         }
         composable<MapRoute> { Placeholder(R.string.tab_map) }
-        composable<MarketRoute> { Placeholder(R.string.tab_market) }
-        composable<EventsRoute> { Placeholder(R.string.tab_events) }
+        composable<MarketRoute> {
+            MarketScreen(onOpen = { nav.navigate(ListingRoute(it)) }, onCreate = { nav.navigate(ListingEditRoute()) })
+        }
+        composable<ListingRoute> {
+            ListingDetailScreen(
+                onBack = { nav.popBackStack() },
+                onEdit = { nav.navigate(ListingEditRoute(it)) },
+                onOpenProfile = postNav.openProfile,
+                onOpenChat = openChat,
+            )
+        }
+        composable<ListingEditRoute> {
+            ListingEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(ListingRoute(id), created) })
+        }
+        composable<EventsRoute> {
+            EventsScreen(onOpen = { nav.navigate(EventRoute(it)) }, onCreate = { nav.navigate(EventEditRoute()) })
+        }
+        composable<EventRoute> {
+            EventDetailScreen(onBack = { nav.popBackStack() }, onEdit = { nav.navigate(EventEditRoute(it)) }, onOpenProfile = postNav.openProfile)
+        }
+        composable<EventEditRoute> {
+            EventEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(EventRoute(id), created) })
+        }
+        composable<LostFoundRoute> { entry ->
+            if (entry.toRoute<LostFoundRoute>().itemId == null) {
+                LostFoundListScreen(
+                    onBack = { nav.popBackStack() },
+                    onOpen = { nav.navigate(LostFoundRoute(it)) },
+                    onCreate = { nav.navigate(LostFoundEditRoute()) },
+                )
+            } else {
+                LostFoundDetailScreen(
+                    onBack = { nav.popBackStack() },
+                    onEdit = { nav.navigate(LostFoundEditRoute(it)) },
+                    onOpenProfile = postNav.openProfile,
+                    onOpenChat = openChat,
+                )
+            }
+        }
+        composable<LostFoundEditRoute> {
+            LostFoundEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(LostFoundRoute(id), created) })
+        }
+        composable<ServicesRoute> {
+            ServicesScreen(
+                onBack = { nav.popBackStack() },
+                onOpenService = { nav.navigate(ServiceRoute(it)) },
+                onOpenHelp = { nav.navigate(HelpRoute(it)) },
+                onCreateService = { nav.navigate(ServiceEditRoute()) },
+                onAskHelp = { nav.navigate(HelpEditRoute) },
+            )
+        }
+        composable<ServiceRoute> {
+            ServiceDetailScreen(
+                onBack = { nav.popBackStack() },
+                onEdit = { nav.navigate(ServiceEditRoute(it)) },
+                onOpenProfile = postNav.openProfile,
+                onOpenChat = openChat,
+            )
+        }
+        composable<ServiceEditRoute> {
+            ServiceEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(ServiceRoute(id), created) })
+        }
+        composable<HelpRoute> {
+            HelpDetailScreen(onBack = { nav.popBackStack() }, onOpenProfile = postNav.openProfile, onOpenChat = openChat)
+        }
+        composable<HelpEditRoute> {
+            HelpEditScreen(onBack = { nav.popBackStack() }, onSaved = { id -> nav.afterSave(HelpRoute(id), created = true) })
+        }
         composable<AlertsRoute> { Placeholder(R.string.tab_alerts) }
 
         composable<SearchRoute> { SearchScreen(postNav, onBack = { nav.popBackStack() }) }
@@ -87,6 +169,13 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
         }
         composable<EditProfileRoute> { EditProfileScreen(onBack = { nav.popBackStack() }) }
     }
+}
+
+/** After a create/edit form: close it, ask the previous list to refresh, and open the new item. */
+private fun NavHostController.afterSave(detail: Any, created: Boolean) {
+    popBackStack()
+    currentBackStackEntry?.savedStateHandle?.set("refresh", true)
+    if (created) navigate(detail)
 }
 
 @Composable

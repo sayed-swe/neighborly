@@ -72,15 +72,27 @@ fun LocationField(
     label: String = stringResource(R.string.field_location_name),
     locating: Boolean = false,
 ) {
-    val request = rememberLocationRequest(onGranted = onUseMyLocation)
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         NbTextField(name, { onName(it.take(255)) }, label)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SecondaryButton(stringResource(R.string.action_use_my_location), request, icon = Icons.Outlined.MyLocation, enabled = !locating)
-            if (latitude != null && longitude != null) {
-                MetaText("%.4f, %.4f".format(Locale.US, latitude, longitude), Modifier.weight(1f))
-                FilledTonalIconButton(onClick = onClearCoords) { Icon(Icons.Outlined.Close, stringResource(R.string.action_clear)) }
-            }
+        CoordinatesField(latitude, longitude, onUseMyLocation, onClearCoords, locating)
+    }
+}
+
+/** "Use my location" button + the picked coordinates (used for the map). */
+@Composable
+fun CoordinatesField(
+    latitude: Double?,
+    longitude: Double?,
+    onUseMyLocation: () -> Unit,
+    onClear: () -> Unit,
+    locating: Boolean = false,
+) {
+    val request = rememberLocationRequest(onGranted = onUseMyLocation)
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        SecondaryButton(stringResource(R.string.action_use_my_location), request, icon = Icons.Outlined.MyLocation, enabled = !locating)
+        if (latitude != null && longitude != null) {
+            MetaText("%.4f, %.4f".format(Locale.US, latitude, longitude), Modifier.weight(1f))
+            FilledTonalIconButton(onClick = onClear) { Icon(Icons.Outlined.Close, stringResource(R.string.action_clear)) }
         }
     }
 }
