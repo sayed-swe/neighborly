@@ -45,6 +45,7 @@ import com.neighborly.app.feature.services.ServiceDetailScreen
 import com.neighborly.app.feature.services.ServiceEditScreen
 import com.neighborly.app.feature.services.ServicesScreen
 import androidx.navigation.toRoute
+import com.neighborly.app.feature.map.MapScreen
 import com.neighborly.app.feature.alerts.AlertCreateScreen
 import com.neighborly.app.feature.alerts.AlertsScreen
 import com.neighborly.app.feature.alerts.NotificationsScreen
@@ -69,7 +70,7 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
                 onOpen = { nav.navigate(it) },
             )
         }
-        composable<MapRoute> { Placeholder(R.string.tab_map) }
+        composable<MapRoute> { MapScreen(onOpen = { nav.navigate(it) }) }
         composable<MarketRoute> {
             MarketScreen(onOpen = { nav.navigate(ListingRoute(it)) }, onCreate = { nav.navigate(ListingEditRoute()) })
         }

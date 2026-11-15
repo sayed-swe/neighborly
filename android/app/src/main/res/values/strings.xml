@@ -305,4 +305,11 @@
     <string name="alerts_resolved_done">Alert resolved</string>
     <string name="alerts_empty">No alerts</string>
     <string name="alerts_empty_text">All quiet in the neighborhood.</string>
+
+    <!-- Map -->
+    <string name="map_kind_posts">Posts</string>
+    <string name="map_kind_alerts">Alerts</string>
+    <string name="map_kind_help">Help needed</string>
+    <string name="map_empty">Nothing on the map here</string>
+    <string name="map_count">%1$d places · tap a marker twice to open</string>
 </resources>
