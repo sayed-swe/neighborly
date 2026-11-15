@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Neighborly</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_market">Buy &amp; sell</string>
+    <string name="tab_events">Events</string>
+    <string name="tab_alerts">Alerts</string>
+    <string name="error_title">Something went wrong</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_cancel">Cancel</string>
+</resources>

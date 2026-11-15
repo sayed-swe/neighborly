@@ -1,0 +1,32 @@
+name: Android CI
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/android.yml']
+  pull_request:
+    paths: ['android/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build, lint and test
+        # Supabase config comes from ../.env.production (or repo secrets SUPABASE_URL / SUPABASE_ANON_KEY)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: ./gradlew lintDebug testDebugUnitTest assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: neighborly-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
