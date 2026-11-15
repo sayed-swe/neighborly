@@ -1,39 +1,64 @@
 package com.neighborly.app.navigation
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Storefront
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.neighborly.app.R
-import kotlinx.serialization.Serializable
+import com.neighborly.app.core.designsystem.Avatar
+import com.neighborly.app.core.designsystem.ErrorState
+import com.neighborly.app.core.supabase.AuthState
+import com.neighborly.app.data.model.Profile
+import com.neighborly.app.feature.auth.BlockedScreen
+import com.neighborly.app.feature.auth.ForgotPasswordScreen
+import com.neighborly.app.feature.auth.LoginScreen
+import com.neighborly.app.feature.auth.NewPasswordScreen
+import com.neighborly.app.feature.auth.SignupScreen
 import kotlin.reflect.KClass
-
-@Serializable data object HomeRoute
-@Serializable data object MapRoute
-@Serializable data object MarketRoute
-@Serializable data object EventsRoute
-@Serializable data object AlertsRoute
 
 private data class Tab(val route: Any, val cls: KClass<*>, val label: Int, val icon: ImageVector)
 
@@ -46,41 +71,100 @@ private val tabs = listOf(
 )
 
 @Composable
-fun AppRoot() {
+fun AppRoot(vm: RootViewModel = hiltViewModel()) {
+    val auth by vm.authState.collectAsStateWithLifecycle()
+    when (val s = auth) {
+        AuthState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        AuthState.SignedOut -> SignedOutGraph()
+        AuthState.PasswordRecovery -> NewPasswordScreen(onSignOut = vm::signOut)
+        is AuthState.Blocked -> BlockedScreen(s.profile.status, onSignOut = vm::signOut)
+        is AuthState.ProfileError -> ErrorState(s.message, onRetry = vm::signOut)
+        is AuthState.SignedIn -> MainShell(s.profile, vm)
+    }
+}
+
+@Composable
+private fun SignedOutGraph() {
     val nav = rememberNavController()
-    val entry = nav.currentBackStackEntryAsState().value
+    NavHost(nav, startDestination = LoginRoute) {
+        composable<LoginRoute> {
+            LoginScreen(onSignup = { nav.navigate(SignupRoute) }, onForgot = { nav.navigate(ForgotPasswordRoute) })
+        }
+        composable<SignupRoute> { SignupScreen(onLogin = { nav.popBackStack(LoginRoute, inclusive = false) }) }
+        composable<ForgotPasswordRoute> { ForgotPasswordScreen(onBack = { nav.popBackStack() }) }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MainShell(me: Profile, vm: RootViewModel) {
+    val nav = rememberNavController()
+    val badges by vm.badges.collectAsStateWithLifecycle()
+    val entry by nav.currentBackStackEntryAsState()
+    val onTab = tabs.any { entry?.destination?.hasRoute(it.cls) == true }
+
     Scaffold(
+        topBar = {
+            if (onTab) {
+                TopAppBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Image(painterResource(R.drawable.ic_logo), contentDescription = null, modifier = Modifier.size(34.dp))
+                            Text(stringResource(R.string.app_name), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { nav.navigate(SearchRoute) }) {
+                            Icon(Icons.Outlined.Search, stringResource(R.string.cd_search))
+                        }
+                        BadgeIcon(badges.chats, Icons.AutoMirrored.Outlined.Chat, stringResource(R.string.cd_chats)) { nav.navigate(ChatsRoute) }
+                        BadgeIcon(badges.notifications, Icons.Outlined.Notifications, stringResource(R.string.cd_notifications)) {
+                            nav.navigate(NotificationsRoute)
+                        }
+                        IconButton(onClick = { nav.navigate(MenuRoute) }) {
+                            Avatar(me.avatarUrl, me.fullName, size = 32.dp)
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+                )
+            }
+        },
         bottomBar = {
-            NavigationBar {
-                tabs.forEach { tab ->
-                    val selected = entry?.destination?.hasRoute(tab.cls) == true
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            nav.navigate(tab.route) {
-                                popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = { Icon(tab.icon, contentDescription = null) },
-                        label = { Text(stringResource(tab.label)) },
-                    )
+            if (onTab) {
+                NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+                    tabs.forEach { tab ->
+                        NavigationBarItem(
+                            selected = entry?.destination?.hasRoute(tab.cls) == true,
+                            onClick = { nav.navigateTab(tab.route) },
+                            icon = {
+                                if (tab.route == AlertsRoute && badges.alerts > 0) {
+                                    BadgedBox(badge = { Badge { Text(badges.alerts.toString()) } }) { Icon(tab.icon, null) }
+                                } else Icon(tab.icon, null)
+                            },
+                            label = { Text(stringResource(tab.label), maxLines = 1) },
+                        )
+                    }
                 }
             }
         },
     ) { padding ->
-        NavHost(nav, startDestination = HomeRoute, modifier = Modifier.padding(padding)) {
-            composable<HomeRoute> { Placeholder(R.string.tab_home) }
-            composable<MapRoute> { Placeholder(R.string.tab_map) }
-            composable<MarketRoute> { Placeholder(R.string.tab_market) }
-            composable<EventsRoute> { Placeholder(R.string.tab_events) }
-            composable<AlertsRoute> { Placeholder(R.string.tab_alerts) }
+        Column(Modifier.padding(padding).fillMaxSize()) {
+            NeighborlyNavHost(nav, me, vm)
         }
     }
 }
 
 @Composable
-private fun Placeholder(label: Int) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(stringResource(label)) }
+private fun BadgeIcon(count: Int, icon: ImageVector, description: String, onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        if (count > 0) {
+            BadgedBox(badge = { Badge { Text(if (count > 99) "99+" else count.toString()) } }) { Icon(icon, description) }
+        } else Icon(icon, description)
+    }
+}
+
+fun NavHostController.navigateTab(route: Any) = navigate(route) {
+    popUpTo(graph.findStartDestination().id) { saveState = true }
+    launchSingleTop = true
+    restoreState = true
 }

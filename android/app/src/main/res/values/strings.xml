@@ -1,11 +1,125 @@
 <resources>
     <string name="app_name">Neighborly</string>
+
+    <!-- Tabs -->
     <string name="tab_home">Home</string>
     <string name="tab_map">Map</string>
     <string name="tab_market">Buy &amp; sell</string>
     <string name="tab_events">Events</string>
     <string name="tab_alerts">Alerts</string>
-    <string name="error_title">Something went wrong</string>
+
+    <!-- Common actions -->
     <string name="action_retry">Try again</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_back">Back</string>
+    <string name="action_save">Save</string>
+    <string name="saving">Saving…</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_report">Report</string>
+    <string name="action_send_report">Send report</string>
+    <string name="action_message">Message</string>
+    <string name="action_log_in">Log in</string>
+    <string name="action_log_out">Log out</string>
+    <string name="action_sign_up">Sign up</string>
+    <string name="action_save_password">Save new password</string>
+    <string name="action_post">Post</string>
+    <string name="action_send">Send</string>
+    <string name="action_create">Create</string>
+    <string name="action_publish">Publish</string>
+    <string name="action_copy_link">Copy link</string>
+    <string name="action_close">Close</string>
+    <string name="action_call">Call</string>
+    <string name="action_see_all">See all</string>
+    <string name="action_load_more">Load more</string>
+    <string name="action_remove_photo">Remove photo</string>
+    <string name="action_add_photo">Add photo</string>
+    <string name="action_use_my_location">Use my location</string>
+    <string name="action_clear">Clear</string>
+    <string name="link_copied">Link copied</string>
+    <string name="deleted">Deleted</string>
+    <string name="saved">Saved</string>
+    <string name="report_sent">Thanks — a moderator will review it.</string>
+    <string name="confirm_delete_title">Delete this?</string>
+    <string name="confirm_delete_text">This can\'t be undone.</string>
+
+    <!-- States -->
+    <string name="error_title">Something went wrong</string>
+    <string name="offline_banner">You\'re offline. Showing what was loaded.</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_search">Search</string>
+    <string name="cd_chats">Chats</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="cd_menu">Menu</string>
+    <string name="cd_more">More options</string>
+    <string name="cd_cover_photo">Cover photo</string>
+    <string name="cd_avatar">Profile photo</string>
+    <string name="cd_post_photo">Post photo</string>
+    <string name="cd_item_photo">Item photo</string>
+    <string name="cd_send">Send message</string>
+    <string name="cd_my_location">My location</string>
+
+    <!-- Auth -->
+    <string name="auth_tagline">Connect with the people next door — share news, help out, buy &amp; sell.</string>
+    <string name="auth_forgot">Forgot password?</string>
+    <string name="auth_create_account">Create new account</string>
+    <string name="auth_have_account">Already have an account? Log in</string>
+    <string name="auth_check_email_title">Check your email</string>
+    <string name="auth_check_email_text">We sent a confirmation link to %1$s. Open it on this phone to finish signing up.</string>
+    <string name="auth_reset_title">Reset your password</string>
+    <string name="auth_reset_text">Enter your email and we\'ll send you a link to choose a new password.</string>
+    <string name="auth_reset_sent">If an account exists for %1$s, a reset link is on its way.</string>
+    <string name="auth_send_link">Send reset link</string>
+    <string name="auth_back_to_login">Back to log in</string>
+    <string name="auth_new_password_title">Choose a new password</string>
+    <string name="field_email">Email</string>
+    <string name="field_password">Password</string>
+    <string name="field_new_password">New password</string>
+    <string name="field_full_name">Full name</string>
+    <string name="field_username">Username</string>
+    <string name="field_phone">Phone</string>
+    <string name="field_neighborhood">Neighborhood</string>
+    <string name="field_bio">Bio</string>
+    <string name="field_address">Address</string>
+    <string name="hint_username">3–30 characters: a–z, 0–9, _ and .</string>
+    <string name="hint_password">At least 8 characters</string>
+    <string name="err_name_required">Please enter your name</string>
+    <string name="err_username">Username must be 3–30 characters: a–z, 0–9, _ or .</string>
+    <string name="err_neighborhood">Please pick your neighborhood</string>
+    <string name="err_email">Please enter a valid email</string>
+    <string name="err_password">Password must be at least 8 characters</string>
+    <string name="blocked_suspended_title">Your account is suspended</string>
+    <string name="blocked_banned_title">Your account has been banned</string>
+    <string name="blocked_text">A moderator restricted this account. Contact the Neighborly team if you think this is a mistake.</string>
+
+    <!-- Profile & menu -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_edit">Edit profile</string>
+    <string name="profile_about">About</string>
+    <string name="profile_lives_in">Lives in %1$s</string>
+    <string name="profile_joined">Joined %1$s</string>
+    <string name="profile_change_cover">Change cover photo</string>
+    <string name="profile_change_avatar">Change profile photo</string>
+    <string name="profile_posts">Posts</string>
+    <string name="profile_no_posts">No posts yet</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_moderator">Moderator</string>
+    <string name="badge_pro">Pro</string>
+    <string name="badge_official">Official announcement</string>
+    <string name="badge_verified">Verified</string>
+    <string name="menu_title">Menu</string>
+    <string name="menu_see_profile">See your profile</string>
+    <string name="menu_feed_filters">Search &amp; feed filters</string>
+    <string name="menu_services">Services</string>
+    <string name="menu_help">Help requests</string>
+    <string name="menu_lost_found">Lost &amp; found</string>
+    <string name="menu_messages">Messages</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_moderation">Moderation</string>
+
+    <!-- Report -->
+    <string name="report_title">Report this %1$s</string>
+    <string name="report_text">Tell the moderators what\'s wrong. Reports are private.</string>
+    <string name="report_details">Details (optional)</string>
 </resources>
