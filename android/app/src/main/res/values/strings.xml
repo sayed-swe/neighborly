@@ -130,8 +130,15 @@
     <string name="post_react">Pick a reaction</string>
     <string name="post_comment">Comment</string>
     <string name="post_share">Share</string>
-    <string name="post_comments_count">%1$s comments</string>
-    <string name="post_shares_count">%1$s shares</string>
+    <plurals name="post_comments">
+        <item quantity="one">%1$s comment</item>
+        <item quantity="other">%1$s comments</item>
+    </plurals>
+    <plurals name="post_shares">
+        <item quantity="one">%1$s share</item>
+        <item quantity="other">%1$s shares</item>
+    </plurals>
+    <string name="comment_delete_title">Delete comment?</string>
     <string name="post_shared_unavailable">This content isn\'t available right now.</string>
     <string name="post_delete_title">Delete post?</string>
     <string name="comments_title">Comments</string>
@@ -277,4 +284,25 @@
     <string name="help_offers_count">%1$d offers</string>
     <string name="help_offers_title">Offers (%1$d)</string>
     <string name="help_update_status">Update status</string>
+
+    <!-- Messages & notifications -->
+    <string name="chats_empty">No conversations yet</string>
+    <string name="chats_empty_text">Message a neighbor from their profile, a listing or a service.</string>
+    <string name="chats_no_messages">Say hello 👋</string>
+    <string name="chats_you_prefix">You: </string>
+    <string name="chat_placeholder">Write a message…</string>
+    <string name="chat_empty">Start your conversation with %1$s</string>
+    <string name="notifications_empty">You\'re all caught up</string>
+    <string name="notifications_mark_all">Mark all as read</string>
+
+    <!-- Emergency alerts -->
+    <string name="alerts_raise">Raise alert</string>
+    <string name="alerts_send">Send alert</string>
+    <string name="alerts_hint">Alerts notify everyone in your neighborhood. Use them for real safety issues.</string>
+    <string name="alerts_severity">Severity</string>
+    <string name="alerts_message">What\'s happening?</string>
+    <string name="alerts_resolve">Mark resolved</string>
+    <string name="alerts_resolved_done">Alert resolved</string>
+    <string name="alerts_empty">No alerts</string>
+    <string name="alerts_empty_text">All quiet in the neighborhood.</string>
 </resources>

@@ -103,7 +103,10 @@ fun DetailScaffold(
         topBar = { BackTopBar(title, onBack, actions) },
         bottomBar = {
             if (comments != null && cs != null) {
-                CommentInputBar(cs, comments::onText, comments::send, comments::cancelReply, stringResource(commentPlaceholder))
+                CommentInputBar(
+                    cs, comments::onText, comments::send, comments::cancelReply, stringResource(commentPlaceholder),
+                    onConfirmDelete = comments::confirmDelete, onDismissDelete = comments::dismissDelete,
+                )
             }
         },
     ) { padding ->
@@ -114,7 +117,7 @@ fun DetailScaffold(
                     item { SectionTitle(stringResource(commentsTitle)) }
                     commentItems(
                         cs, comments.myId, comments.canModerate,
-                        onLike = comments::toggleLike, onReply = comments::startReply, onDelete = comments::delete,
+                        onLike = comments::toggleLike, onReply = comments::startReply, onDelete = comments::requestDelete,
                         onOpenProfile = onOpenProfile, onRetry = comments::load,
                     )
                 }

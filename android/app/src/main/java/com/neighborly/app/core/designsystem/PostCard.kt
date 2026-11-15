@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -239,11 +240,11 @@ private fun StatsRow(post: FeedPost, callbacks: PostCallbacks) {
         }
         Spacer(Modifier.weight(1f))
         if (post.commentCount > 0) {
-            MetaText(stringResource(R.string.post_comments_count, Format.compact(post.commentCount)),
+            MetaText(pluralStringResource(R.plurals.post_comments, post.commentCount, Format.compact(post.commentCount)),
                 Modifier.clickable { callbacks.onComment(post.id) })
         }
         if (post.shareCount > 0) {
-            MetaText(stringResource(R.string.post_shares_count, Format.compact(post.shareCount)), Modifier.padding(start = 12.dp))
+            MetaText(pluralStringResource(R.plurals.post_shares, post.shareCount, Format.compact(post.shareCount)), Modifier.padding(start = 12.dp))
         }
     }
 }

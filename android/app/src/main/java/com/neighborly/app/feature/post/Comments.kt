@@ -66,6 +66,8 @@ data class CommentsUiState(
     val text: String = "",
     val replyTo: Comment? = null,
     val sending: Boolean = false,
+    /** Waiting for the user to confirm deletion. */
+    val pendingDelete: Comment? = null,
 ) {
     /** One level of replies, like the web. */
     val tree: List<CommentNode>
@@ -158,6 +160,10 @@ class CommentsViewModel @Inject constructor(
             repo.setLiked(c.id, !liked).onFailure { e -> patch(liked); _messages.trySend(e.toUiMessage()) }
         }
     }
+
+    fun requestDelete(c: Comment) = _state.update { it.copy(pendingDelete = c) }
+    fun dismissDelete() = _state.update { it.copy(pendingDelete = null) }
+    fun confirmDelete() { _state.value.pendingDelete?.let(::delete); dismissDelete() }
 
     fun delete(c: Comment) {
         viewModelScope.launch {
@@ -260,7 +266,18 @@ fun CommentInputBar(
     onCancelReply: () -> Unit,
     placeholder: String,
     focusRequester: FocusRequester = FocusRequester(),
+    onConfirmDelete: () -> Unit = {},
+    onDismissDelete: () -> Unit = {},
 ) {
+    if (state.pendingDelete != null) {
+        com.neighborly.app.core.designsystem.ConfirmDialog(
+            title = stringResource(R.string.comment_delete_title),
+            text = stringResource(R.string.confirm_delete_text),
+            confirmLabel = stringResource(R.string.action_delete),
+            onConfirm = onConfirmDelete,
+            onDismiss = onDismissDelete,
+        )
+    }
     Surface(shadowElevation = 4.dp, color = MaterialTheme.colorScheme.surface) {
         Column(Modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(horizontal = 8.dp, vertical = 6.dp)) {
             state.replyTo?.let { r ->

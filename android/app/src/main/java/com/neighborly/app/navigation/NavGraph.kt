@@ -45,6 +45,11 @@ import com.neighborly.app.feature.services.ServiceDetailScreen
 import com.neighborly.app.feature.services.ServiceEditScreen
 import com.neighborly.app.feature.services.ServicesScreen
 import androidx.navigation.toRoute
+import com.neighborly.app.feature.alerts.AlertCreateScreen
+import com.neighborly.app.feature.alerts.AlertsScreen
+import com.neighborly.app.feature.alerts.NotificationsScreen
+import com.neighborly.app.feature.messages.ChatScreen
+import com.neighborly.app.feature.messages.ChatsScreen
 
 @Composable
 fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) {
@@ -133,7 +138,28 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
         composable<HelpEditRoute> {
             HelpEditScreen(onBack = { nav.popBackStack() }, onSaved = { id -> nav.afterSave(HelpRoute(id), created = true) })
         }
-        composable<AlertsRoute> { Placeholder(R.string.tab_alerts) }
+        composable<AlertsRoute> {
+            AlertsScreen(onCreate = { nav.navigate(AlertCreateRoute) }, onOpenProfile = postNav.openProfile, onChanged = root::refreshBadges)
+        }
+        composable<AlertCreateRoute> {
+            AlertCreateScreen(onBack = { nav.popBackStack() }, onDone = {
+                nav.popBackStack()
+                nav.currentBackStackEntry?.savedStateHandle?.set("refresh", true)
+            })
+        }
+        composable<ChatsRoute> {
+            ChatsScreen(onBack = { nav.popBackStack() }, onOpen = openChat)
+        }
+        composable<ChatRoute> {
+            ChatScreen(
+                onBack = { root.refreshBadges(); nav.popBackStack() },
+                onOpenProfile = postNav.openProfile,
+                onOpenPost = postNav.openPost,
+            )
+        }
+        composable<NotificationsRoute> {
+            NotificationsScreen(onBack = { nav.popBackStack() }, onOpen = { nav.navigate(it) }, onChanged = root::refreshBadges)
+        }
 
         composable<SearchRoute> { SearchScreen(postNav, onBack = { nav.popBackStack() }) }
         composable<PostRoute> { PostDetailScreen(postNav, onBack = { nav.popBackStack() }) }

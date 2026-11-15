@@ -134,7 +134,10 @@ fun PostDetailScreen(
         },
         bottomBar = {
             if (s.post is Load.Data) {
-                CommentInputBar(cs, comments::onText, comments::send, comments::cancelReply, stringResource(R.string.comment_placeholder))
+                CommentInputBar(
+                    cs, comments::onText, comments::send, comments::cancelReply, stringResource(R.string.comment_placeholder),
+                    onConfirmDelete = comments::confirmDelete, onDismissDelete = comments::dismissDelete,
+                )
             }
         },
     ) { padding ->
@@ -146,7 +149,7 @@ fun PostDetailScreen(
                         item { SectionTitle(stringResource(R.string.comments_title)) }
                         commentItems(
                             cs, comments.myId, comments.canModerate,
-                            onLike = comments::toggleLike, onReply = comments::startReply, onDelete = comments::delete,
+                            onLike = comments::toggleLike, onReply = comments::startReply, onDelete = comments::requestDelete,
                             onOpenProfile = nav.openProfile, onRetry = comments::load,
                         )
                     }
