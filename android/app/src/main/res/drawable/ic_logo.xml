@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Round house mark: green circle with a white house -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#22774A"
+        android:pathData="M24,0a24,24 0,1 1,0 48a24,24 0,1 1,0 -48z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,11L10,23h4v13h8v-8h4v8h8V23h4z" />
+    <path
+        android:fillColor="#E0663A"
+        android:pathData="M33,13h3v6l-3,-2.6z" />
+</vector>

@@ -1,0 +1,359 @@
+<resources>
+    <string name="app_name">Neighborly</string>
+
+    <!-- Tabs -->
+    <string name="tab_home">Home</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_market">Buy &amp; sell</string>
+    <string name="tab_events">Events</string>
+    <string name="tab_alerts">Alerts</string>
+
+    <!-- Common actions -->
+    <string name="action_retry">Try again</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_back">Back</string>
+    <string name="action_save">Save</string>
+    <string name="saving">Saving…</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_report">Report</string>
+    <string name="action_send_report">Send report</string>
+    <string name="action_message">Message</string>
+    <string name="action_log_in">Log in</string>
+    <string name="action_log_out">Log out</string>
+    <string name="action_sign_up">Sign up</string>
+    <string name="action_save_password">Save new password</string>
+    <string name="action_post">Post</string>
+    <string name="action_send">Send</string>
+    <string name="action_create">Create</string>
+    <string name="action_publish">Publish</string>
+    <string name="action_copy_link">Copy link</string>
+    <string name="action_close">Close</string>
+    <string name="action_call">Call</string>
+    <string name="action_see_all">See all</string>
+    <string name="action_load_more">Load more</string>
+    <string name="action_remove_photo">Remove photo</string>
+    <string name="action_add_photo">Add photo</string>
+    <string name="action_use_my_location">Use my location</string>
+    <string name="action_clear">Clear</string>
+    <string name="link_copied">Link copied</string>
+    <string name="deleted">Deleted</string>
+    <string name="saved">Saved</string>
+    <string name="report_sent">Thanks — a moderator will review it.</string>
+    <string name="confirm_delete_title">Delete this?</string>
+    <string name="confirm_delete_text">This can\'t be undone.</string>
+
+    <!-- States -->
+    <string name="error_title">Something went wrong</string>
+    <string name="offline_banner">You\'re offline. Showing what was loaded.</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_search">Search</string>
+    <string name="cd_chats">Chats</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="cd_menu">Menu</string>
+    <string name="cd_more">More options</string>
+    <string name="cd_cover_photo">Cover photo</string>
+    <string name="cd_avatar">Profile photo</string>
+    <string name="cd_post_photo">Post photo</string>
+    <string name="cd_item_photo">Item photo</string>
+    <string name="cd_send">Send message</string>
+    <string name="cd_my_location">My location</string>
+
+    <!-- Auth -->
+    <string name="auth_tagline">Connect with the people next door — share news, help out, buy &amp; sell.</string>
+    <string name="auth_forgot">Forgot password?</string>
+    <string name="auth_create_account">Create new account</string>
+    <string name="auth_have_account">Already have an account? Log in</string>
+    <string name="auth_check_email_title">Check your email</string>
+    <string name="auth_check_email_text">We sent a confirmation link to %1$s. Open it on this phone to finish signing up.</string>
+    <string name="auth_reset_title">Reset your password</string>
+    <string name="auth_reset_text">Enter your email and we\'ll send you a link to choose a new password.</string>
+    <string name="auth_reset_sent">If an account exists for %1$s, a reset link is on its way.</string>
+    <string name="auth_send_link">Send reset link</string>
+    <string name="auth_back_to_login">Back to log in</string>
+    <string name="auth_new_password_title">Choose a new password</string>
+    <string name="field_email">Email</string>
+    <string name="field_password">Password</string>
+    <string name="field_new_password">New password</string>
+    <string name="field_full_name">Full name</string>
+    <string name="field_username">Username</string>
+    <string name="field_phone">Phone</string>
+    <string name="field_neighborhood">Neighborhood</string>
+    <string name="field_bio">Bio</string>
+    <string name="field_address">Address</string>
+    <string name="hint_username">3–30 characters: a–z, 0–9, _ and .</string>
+    <string name="hint_password">At least 8 characters</string>
+    <string name="err_name_required">Please enter your name</string>
+    <string name="err_username">Username must be 3–30 characters: a–z, 0–9, _ or .</string>
+    <string name="err_neighborhood">Please pick your neighborhood</string>
+    <string name="err_email">Please enter a valid email</string>
+    <string name="err_password">Password must be at least 8 characters</string>
+    <string name="blocked_suspended_title">Your account is suspended</string>
+    <string name="blocked_banned_title">Your account has been banned</string>
+    <string name="blocked_text">A moderator restricted this account. Contact the Neighborly team if you think this is a mistake.</string>
+
+    <!-- Profile & menu -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_edit">Edit profile</string>
+    <string name="profile_about">About</string>
+    <string name="profile_lives_in">Lives in %1$s</string>
+    <string name="profile_joined">Joined %1$s</string>
+    <string name="profile_change_cover">Change cover photo</string>
+    <string name="profile_change_avatar">Change profile photo</string>
+    <string name="profile_posts">Posts</string>
+    <string name="profile_no_posts">No posts yet</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_moderator">Moderator</string>
+    <string name="badge_pro">Pro</string>
+    <string name="badge_official">Official announcement</string>
+    <string name="badge_verified">Verified</string>
+    <string name="menu_title">Menu</string>
+    <string name="menu_see_profile">See your profile</string>
+    <string name="menu_feed_filters">Search &amp; feed filters</string>
+    <string name="menu_services">Services</string>
+    <string name="menu_help">Help requests</string>
+    <string name="menu_lost_found">Lost &amp; found</string>
+    <string name="menu_messages">Messages</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_moderation">Moderation</string>
+
+    <!-- Report -->
+    <string name="report_title">Report this %1$s</string>
+    <string name="report_text">Tell the moderators what\'s wrong. Reports are private.</string>
+    <string name="report_details">Details (optional)</string>
+
+    <!-- Feed & posts -->
+    <string name="post_title">Post</string>
+    <string name="post_by">%1$s\'s post</string>
+    <string name="post_like">Like</string>
+    <string name="post_react">Pick a reaction</string>
+    <string name="post_comment">Comment</string>
+    <string name="post_share">Share</string>
+    <plurals name="post_comments">
+        <item quantity="one">%1$s comment</item>
+        <item quantity="other">%1$s comments</item>
+    </plurals>
+    <plurals name="post_shares">
+        <item quantity="one">%1$s share</item>
+        <item quantity="other">%1$s shares</item>
+    </plurals>
+    <string name="comment_delete_title">Delete comment?</string>
+    <string name="post_shared_unavailable">This content isn\'t available right now.</string>
+    <string name="post_delete_title">Delete post?</string>
+    <string name="comments_title">Comments</string>
+    <string name="comments_empty">No comments yet. Start the conversation.</string>
+    <string name="comment_reply">Reply</string>
+    <string name="comment_replying_to">Replying to %1$s</string>
+    <string name="comment_placeholder">Write a comment…</string>
+    <string name="question_placeholder">Ask a question…</string>
+    <string name="share_title">Share</string>
+    <string name="share_caption">Say something about this (optional)</string>
+    <string name="share_now">Share now</string>
+    <string name="share_send_messages">Send in Messages</string>
+    <string name="share_pick_chat">Send to</string>
+    <string name="share_no_chats">No conversations yet.</string>
+    <string name="share_done">Shared</string>
+    <string name="reactors_title">Reactions</string>
+    <string name="reactors_all">All %1$d</string>
+    <string name="composer_title">Create post</string>
+    <string name="composer_edit_title">Edit post</string>
+    <string name="posting">Posting…</string>
+    <string name="composer_audience">Audience</string>
+    <string name="composer_all_neighborhoods">🌐 All neighborhoods</string>
+    <string name="composer_category">Category</string>
+    <string name="composer_no_category">No category</string>
+    <string name="composer_announcement">Post as official announcement</string>
+    <string name="composer_announcement_title">Announcement title</string>
+    <string name="composer_placeholder">What\'s happening around you, %1$s?</string>
+    <string name="composer_where">Where is this?</string>
+    <string name="composer_add_to_post">Add to your post</string>
+    <string name="composer_photo">Photo</string>
+    <string name="composer_location">Location</string>
+    <string name="composer_ask">Ask</string>
+    <string name="field_location_name">Location name</string>
+    <string name="scope_neighborhood">My neighborhood</string>
+    <string name="scope_all">All neighborhoods</string>
+    <string name="feed_empty_title">Nothing here yet</string>
+    <string name="feed_empty_text">Be the first to share what\'s happening around you.</string>
+    <string name="feed_end">You\'re all caught up</string>
+    <string name="nearby_title">Nearby now</string>
+    <string name="nearby_create_post">Create post</string>
+    <string name="nearby_alert">Alert</string>
+    <string name="nearby_event">Event</string>
+    <string name="nearby_for_sale">For sale</string>
+    <string name="nearby_lost_found">Lost &amp; found</string>
+    <string name="search_placeholder">Search posts and people</string>
+    <string name="search_near_me">Near me</string>
+    <string name="search_people">People</string>
+    <string name="search_empty">No posts match</string>
+    <string name="radius_km">%1$d km</string>
+    <string name="filter_all_categories">All categories</string>
+    <string name="filter_all">All</string>
+    <string name="action_next">Next</string>
+    <string name="action_done">Done</string>
+    <string name="not_specified">Not specified</string>
+    <string name="questions_title">Questions</string>
+
+    <!-- Form fields -->
+    <string name="field_title">Title</string>
+    <string name="field_description">Description</string>
+    <string name="field_category">Category</string>
+    <string name="field_condition">Condition</string>
+    <string name="field_price">Price (৳)</string>
+    <string name="hint_price">Leave empty to ask for offers</string>
+    <string name="field_contact">Contact info (optional)</string>
+
+    <!-- Buy & sell -->
+    <string name="market_search">Search Buy &amp; sell</string>
+    <string name="market_sell">Sell something</string>
+    <string name="market_empty">No listings match</string>
+    <string name="listing_new">New listing</string>
+    <string name="listing_edit">Edit listing</string>
+    <string name="listing_type">Listing type</string>
+    <string name="listing_type_sell">For sale</string>
+    <string name="listing_type_buy">Wanted</string>
+    <string name="listing_type_exchange">Exchange</string>
+    <string name="listing_type_free">Free</string>
+    <string name="listing_seller">Seller</string>
+    <string name="listing_message_seller">Message seller</string>
+    <string name="listing_status">Listing status</string>
+    <string name="listing_contact">Contact: %1$s</string>
+
+    <!-- Lost & found -->
+    <string name="lf_lost">Lost</string>
+    <string name="lf_found">Found</string>
+    <string name="lf_report">Report an item</string>
+    <string name="lf_edit">Edit report</string>
+    <string name="lf_empty">Nothing reported here</string>
+    <string name="lf_show_reunited">Show reunited</string>
+    <string name="lf_mark_reunited">Mark as reunited</string>
+    <string name="lf_date">On %1$s</string>
+    <string name="lf_i_lost">I lost something</string>
+    <string name="lf_i_found">I found something</string>
+    <string name="lf_item_name">What is it?</string>
+    <string name="lf_when">When (optional)</string>
+    <string name="lf_where">Where?</string>
+
+    <!-- Events -->
+    <string name="events_upcoming">Upcoming</string>
+    <string name="events_past">Past</string>
+    <string name="events_empty">No events here yet</string>
+    <string name="events_create">Create event</string>
+    <string name="events_edit">Edit event</string>
+    <string name="events_going">Going</string>
+    <string name="events_interested">Interested</string>
+    <string name="events_going_count">%1$d going</string>
+    <string name="events_interested_count">%1$d interested</string>
+    <string name="events_you_going">You\'re going</string>
+    <string name="events_you_interested">You\'re interested</string>
+    <string name="events_capacity">Max %1$d people</string>
+    <string name="events_full">This event is full.</string>
+    <string name="events_host">Host</string>
+    <string name="events_people">Who\'s coming</string>
+    <string name="events_cancel">Cancel event</string>
+    <string name="events_cancel_title">Cancel this event?</string>
+    <string name="events_cancel_text">Everyone will see it as cancelled.</string>
+    <string name="events_starts">Starts</string>
+    <string name="events_ends">Ends (optional)</string>
+    <string name="events_dates_invalid">The end must be after the start.</string>
+    <string name="events_where">Where?</string>
+    <string name="events_max">Max participants (optional)</string>
+
+    <!-- Services & help -->
+    <string name="services_title">Services &amp; help</string>
+    <string name="services_search">Search services</string>
+    <string name="services_offer">Offer a service</string>
+    <string name="services_edit">Edit service</string>
+    <string name="services_empty">No services listed yet</string>
+    <string name="services_provider">Provider</string>
+    <string name="services_inactive">Inactive</string>
+    <string name="services_name">Service name</string>
+    <string name="services_price_info">Price info (e.g. ৳500 per visit)</string>
+    <string name="services_area">Service location (optional)</string>
+    <string name="services_active">Show in the directory</string>
+    <string name="help_ask">Ask for help</string>
+    <string name="help_active">Active</string>
+    <string name="help_resolved">Resolved</string>
+    <string name="help_empty">No help requests</string>
+    <string name="help_type">Type of help</string>
+    <string name="help_what">What do you need?</string>
+    <string name="help_offer">Offer help</string>
+    <string name="help_offer_hint">How can you help?</string>
+    <string name="help_offer_sent">Offer sent — they\'ll be notified.</string>
+    <string name="help_offers_count">%1$d offers</string>
+    <string name="help_offers_title">Offers (%1$d)</string>
+    <string name="help_update_status">Update status</string>
+
+    <!-- Messages & notifications -->
+    <string name="chats_empty">No conversations yet</string>
+    <string name="chats_empty_text">Message a neighbor from their profile, a listing or a service.</string>
+    <string name="chats_no_messages">Say hello 👋</string>
+    <string name="chats_you_prefix">You: </string>
+    <string name="chat_placeholder">Write a message…</string>
+    <string name="chat_empty">Start your conversation with %1$s</string>
+    <string name="notifications_empty">You\'re all caught up</string>
+    <string name="notifications_mark_all">Mark all as read</string>
+
+    <!-- Emergency alerts -->
+    <string name="alerts_raise">Raise alert</string>
+    <string name="alerts_send">Send alert</string>
+    <string name="alerts_hint">Alerts notify everyone in your neighborhood. Use them for real safety issues.</string>
+    <string name="alerts_severity">Severity</string>
+    <string name="alerts_message">What\'s happening?</string>
+    <string name="alerts_resolve">Mark resolved</string>
+    <string name="alerts_resolved_done">Alert resolved</string>
+    <string name="alerts_empty">No alerts</string>
+    <string name="alerts_empty_text">All quiet in the neighborhood.</string>
+
+    <!-- Map -->
+    <string name="map_kind_posts">Posts</string>
+    <string name="map_kind_alerts">Alerts</string>
+    <string name="map_kind_help">Help needed</string>
+    <string name="map_empty">Nothing on the map here</string>
+    <string name="map_count">%1$d places · tap a marker twice to open</string>
+
+    <!-- Moderation -->
+    <string name="mod_reports">Reports</string>
+    <string name="mod_dashboard">Dashboard</string>
+    <string name="mod_open">Open</string>
+    <string name="mod_closed">Closed</string>
+    <string name="mod_empty">No reports here</string>
+    <string name="mod_empty_text">The queue is empty. Nice.</string>
+    <string name="mod_report_n">Report #%1$d</string>
+    <string name="mod_reported_content">REPORTED CONTENT</string>
+    <string name="mod_gone">This item no longer exists.</string>
+    <string name="mod_no_text">(no text)</string>
+    <string name="mod_open_in_app">Open in app →</string>
+    <string name="mod_posted_by">Posted by %1$s</string>
+    <string name="mod_note">Moderator note (private)</string>
+    <string name="mod_dismiss">Dismiss</string>
+    <string name="mod_warn">Warn user</string>
+    <string name="mod_remove">Remove content</string>
+    <string name="mod_suspend">Suspend user</string>
+    <string name="mod_ban">Ban user</string>
+    <string name="mod_closed_done">Report closed</string>
+    <string name="mod_confirm_title">Are you sure?</string>
+    <string name="mod_confirm_ban">The owner will be banned and can no longer use Neighborly.</string>
+    <string name="mod_confirm_suspend">The owner will be suspended until a moderator restores the account.</string>
+    <string name="mod_confirm_remove">The content will be hidden from everyone.</string>
+    <string name="stat_users">Users</string>
+    <string name="stat_active_users">Active users</string>
+    <string name="stat_restricted">Suspended / banned</string>
+    <string name="stat_posts">Posts</string>
+    <string name="stat_hidden_posts">Hidden posts</string>
+    <string name="stat_comments">Comments</string>
+    <string name="stat_reactions">Reactions</string>
+    <string name="stat_shares">Shares</string>
+    <string name="stat_listings">Listings</string>
+    <string name="stat_lost_found">Lost &amp; found</string>
+    <string name="stat_events">Events</string>
+    <string name="stat_services">Services</string>
+    <string name="stat_help">Help requests</string>
+    <string name="stat_alerts">Active alerts</string>
+    <string name="stat_messages">Messages</string>
+    <string name="stat_reports">Open reports</string>
+    <string name="stat_posts_by_day">Posts, last 14 days</string>
+    <string name="stat_signups_by_day">Sign-ups, last 14 days</string>
+    <string name="stat_by_neighborhood">Users by neighborhood</string>
+</resources>
