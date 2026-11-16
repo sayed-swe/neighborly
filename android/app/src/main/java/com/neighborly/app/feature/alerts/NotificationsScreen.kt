@@ -86,7 +86,7 @@ class NotificationsViewModel @Inject constructor(
     /** Realtime: prepend new notifications while the screen is visible. */
     suspend fun watch() {
         val me = session.currentUserId ?: return
-        repo.inserts(me).collect { n ->
+        repo.inserts(me, onSubscribed = { load() }).collect { n ->
             _state.update { s ->
                 val list = (s as? Load.Data)?.value.orEmpty()
                 if (list.any { it.id == n.id }) s else Load.Data(listOf(n) + list)

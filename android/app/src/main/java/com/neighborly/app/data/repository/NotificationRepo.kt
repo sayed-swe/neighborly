@@ -10,6 +10,7 @@ import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.realtime.RealtimeChannel
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import io.github.jan.supabase.realtime.realtime
@@ -52,21 +53,31 @@ class NotificationRepo @Inject constructor(private val supabase: SupabaseClient)
         }
     }
 
-    /** Emits every new notification row for the signed-in user (Realtime). */
-    fun inserts(userId: String): Flow<AppNotification> = callbackFlow {
-        val channel = supabase.channel("notifications-$userId")
+    /**
+     * Emits every new notification row for the signed-in user (Realtime). [onSubscribed] runs on
+     * every (re)join so callers can refetch anything missed while the socket was down.
+     */
+    fun inserts(userId: String, onSubscribed: suspend () -> Unit = {}): Flow<AppNotification> = callbackFlow {
+        // Unique topic per subscriber: the badge and the open screen may listen at the same time.
+        val channel = supabase.channel("notifications-$userId-${java.util.UUID.randomUUID()}")
+        // The change listener must be registered BEFORE subscribe(), or the join omits postgres_changes.
+        val changes = channel.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
+            table = "notifications"
+            filter("user_id", FilterOperator.EQ, userId)
+        }
         val job = launch {
-            channel.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
-                table = "notifications"
-                filter("user_id", FilterOperator.EQ, userId)
-            }.collect { action ->
+            changes.collect { action ->
                 runCatching { AppJson.decodeFromJsonElement(AppNotification.serializer(), action.record) }
                     .onSuccess { trySend(it) }
             }
         }
+        val statusJob = launch {
+            channel.status.collect { if (it == RealtimeChannel.Status.SUBSCRIBED) onSubscribed() }
+        }
         channel.subscribe()
         awaitClose {
             job.cancel()
+            statusJob.cancel()
             CleanupScope.launch { supabase.realtime.removeChannel(channel) }
         }
     }

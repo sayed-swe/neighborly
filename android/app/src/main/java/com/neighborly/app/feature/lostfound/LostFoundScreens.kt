@@ -120,9 +120,6 @@ class LostFoundListViewModel @Inject constructor(
 
     init {
         load()
-        viewModelScope.launch {
-            savedState.getStateFlow("refresh", false).collect { if (it) { savedState["refresh"] = false; load(true) } }
-        }
     }
 
     fun load(refresh: Boolean = false) {

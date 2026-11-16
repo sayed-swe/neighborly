@@ -52,9 +52,12 @@ class RootViewModel @Inject constructor(
     private fun startLive(userId: String) {
         refreshBadges()
         liveJobs = listOf(
-            viewModelScope.launch { notifications.inserts(userId).collect { _badges.update { it.copy(notifications = it.notifications + 1) } } },
             viewModelScope.launch {
-                chats.anyNewMessage(userId).collect { m -> if (m.senderId != userId) refreshChats() }
+                notifications.inserts(userId, onSubscribed = ::refreshNotificationCount)
+                    .collect { _badges.update { it.copy(notifications = it.notifications + 1) } }
+            },
+            viewModelScope.launch {
+                chats.anyNewMessage(userId, onSubscribed = ::refreshChats).collect { m -> if (m.senderId != userId) refreshChats() }
             },
             // Alerts are not in the Realtime publication: poll the count every minute.
             viewModelScope.launch {
@@ -72,6 +75,12 @@ class RootViewModel @Inject constructor(
             alerts.countActive().onSuccess { n -> _badges.update { it.copy(alerts = n) } }
         }
         refreshChats()
+    }
+
+    private fun refreshNotificationCount() {
+        viewModelScope.launch {
+            notifications.countUnread().onSuccess { n -> _badges.update { it.copy(notifications = n) } }
+        }
     }
 
     private fun refreshChats() {

@@ -46,7 +46,6 @@ data class NearbyCard(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val savedState: androidx.lifecycle.SavedStateHandle,
     private val feed: FeedRepo,
     private val alerts: AlertRepo,
     private val events: EventRepo,
@@ -79,12 +78,6 @@ class HomeViewModel @Inject constructor(
             posts.reload()
         }
         loadNearby()
-        // Set by the composer when a post was created/edited (same back-stack entry handle).
-        viewModelScope.launch {
-            savedState.getStateFlow("refresh", false).collect { r ->
-                if (r) { savedState["refresh"] = false; refresh() }
-            }
-        }
     }
 
     fun setScope(scope: FeedScope) {

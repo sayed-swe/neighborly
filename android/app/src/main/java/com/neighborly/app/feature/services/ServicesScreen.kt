@@ -104,9 +104,6 @@ class ServicesViewModel @Inject constructor(
         viewModelScope.launch { _state.update { it.copy(categories = lookups.serviceCategories().getOrDefault(emptyList())) } }
         loadServices(); loadHelp()
         viewModelScope.launch { search.drop(1).debounce(350).collect { loadServices() } }
-        viewModelScope.launch {
-            savedState.getStateFlow("refresh", false).collect { if (it) { savedState["refresh"] = false; refresh() } }
-        }
     }
 
     fun refresh() {

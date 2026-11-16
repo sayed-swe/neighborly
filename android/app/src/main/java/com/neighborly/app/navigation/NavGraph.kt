@@ -45,6 +45,20 @@ import com.neighborly.app.feature.services.ServiceDetailScreen
 import com.neighborly.app.feature.services.ServiceEditScreen
 import com.neighborly.app.feature.services.ServicesScreen
 import androidx.navigation.toRoute
+import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavBackStackEntry
+import com.neighborly.app.feature.alerts.AlertsViewModel
+import com.neighborly.app.feature.events.EventDetailViewModel
+import com.neighborly.app.feature.events.EventsViewModel
+import com.neighborly.app.feature.feed.HomeViewModel
+import com.neighborly.app.feature.lostfound.LostFoundDetailViewModel
+import com.neighborly.app.feature.lostfound.LostFoundListViewModel
+import com.neighborly.app.feature.marketplace.ListingDetailViewModel
+import com.neighborly.app.feature.marketplace.MarketViewModel
+import com.neighborly.app.feature.moderation.ModerationViewModel
+import com.neighborly.app.feature.post.PostDetailViewModel
+import com.neighborly.app.feature.services.ServiceDetailViewModel
+import com.neighborly.app.feature.services.ServicesViewModel
 import com.neighborly.app.feature.map.MapScreen
 import com.neighborly.app.feature.moderation.ModerationScreen
 import com.neighborly.app.feature.moderation.ReportReviewScreen
@@ -65,20 +79,28 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
     }
     val openChat: (Long, String) -> Unit = remember(nav) { { id, name -> nav.navigate(ChatRoute(id, name)) } }
     NavHost(nav, startDestination = HomeRoute) {
-        composable<HomeRoute> {
+        composable<HomeRoute> { entry ->
+            val vm: HomeViewModel = hiltViewModel()
+            entry.OnRefreshRequest(vm::refresh)
             HomeScreen(
+                vm = vm,
                 nav = postNav,
                 onCompose = { photo, loc, ask -> nav.navigate(ComposerRoute(withPhoto = photo, withLocation = loc, ask = ask)) },
                 onOpen = { nav.navigate(it) },
             )
         }
         composable<MapRoute> { MapScreen(onOpen = { nav.navigate(it) }) }
-        composable<MarketRoute> {
-            MarketScreen(onOpen = { nav.navigate(ListingRoute(it)) }, onCreate = { nav.navigate(ListingEditRoute()) })
+        composable<MarketRoute> { entry ->
+            val vm: MarketViewModel = hiltViewModel()
+            entry.OnRefreshRequest { vm.load(true) }
+            MarketScreen(onOpen = { nav.navigate(ListingRoute(it)) }, onCreate = { nav.navigate(ListingEditRoute()) }, vm = vm)
         }
-        composable<ListingRoute> {
+        composable<ListingRoute> { entry ->
+            val vm: ListingDetailViewModel = hiltViewModel()
+            entry.OnRefreshRequest(vm::load)
             ListingDetailScreen(
-                onBack = { nav.popBackStack() },
+                vm = vm,
+                onBack = { nav.popAndRefresh() },
                 onEdit = { nav.navigate(ListingEditRoute(it)) },
                 onOpenProfile = postNav.openProfile,
                 onOpenChat = openChat,
@@ -87,25 +109,38 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
         composable<ListingEditRoute> {
             ListingEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(ListingRoute(id), created) })
         }
-        composable<EventsRoute> {
-            EventsScreen(onOpen = { nav.navigate(EventRoute(it)) }, onCreate = { nav.navigate(EventEditRoute()) })
+        composable<EventsRoute> { entry ->
+            val vm: EventsViewModel = hiltViewModel()
+            entry.OnRefreshRequest { vm.load(true) }
+            EventsScreen(onOpen = { nav.navigate(EventRoute(it)) }, onCreate = { nav.navigate(EventEditRoute()) }, vm = vm)
         }
-        composable<EventRoute> {
-            EventDetailScreen(onBack = { nav.popBackStack() }, onEdit = { nav.navigate(EventEditRoute(it)) }, onOpenProfile = postNav.openProfile)
+        composable<EventRoute> { entry ->
+            val vm: EventDetailViewModel = hiltViewModel()
+            entry.OnRefreshRequest(vm::load)
+            EventDetailScreen(
+                onBack = { nav.popAndRefresh() }, onEdit = { nav.navigate(EventEditRoute(it)) },
+                onOpenProfile = postNav.openProfile, vm = vm,
+            )
         }
         composable<EventEditRoute> {
             EventEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(EventRoute(id), created) })
         }
         composable<LostFoundRoute> { entry ->
             if (entry.toRoute<LostFoundRoute>().itemId == null) {
+                val vm: LostFoundListViewModel = hiltViewModel()
+                entry.OnRefreshRequest { vm.load(true) }
                 LostFoundListScreen(
                     onBack = { nav.popBackStack() },
                     onOpen = { nav.navigate(LostFoundRoute(it)) },
                     onCreate = { nav.navigate(LostFoundEditRoute()) },
+                    vm = vm,
                 )
             } else {
+                val vm: LostFoundDetailViewModel = hiltViewModel()
+                entry.OnRefreshRequest(vm::load)
                 LostFoundDetailScreen(
-                    onBack = { nav.popBackStack() },
+                    vm = vm,
+                    onBack = { nav.popAndRefresh() },
                     onEdit = { nav.navigate(LostFoundEditRoute(it)) },
                     onOpenProfile = postNav.openProfile,
                     onOpenChat = openChat,
@@ -115,8 +150,11 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
         composable<LostFoundEditRoute> {
             LostFoundEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(LostFoundRoute(id), created) })
         }
-        composable<ServicesRoute> {
+        composable<ServicesRoute> { entry ->
+            val vm: ServicesViewModel = hiltViewModel()
+            entry.OnRefreshRequest(vm::refresh)
             ServicesScreen(
+                vm = vm,
                 onBack = { nav.popBackStack() },
                 onOpenService = { nav.navigate(ServiceRoute(it)) },
                 onOpenHelp = { nav.navigate(HelpRoute(it)) },
@@ -124,9 +162,12 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
                 onAskHelp = { nav.navigate(HelpEditRoute) },
             )
         }
-        composable<ServiceRoute> {
+        composable<ServiceRoute> { entry ->
+            val vm: ServiceDetailViewModel = hiltViewModel()
+            entry.OnRefreshRequest(vm::load)
             ServiceDetailScreen(
-                onBack = { nav.popBackStack() },
+                vm = vm,
+                onBack = { nav.popAndRefresh() },
                 onEdit = { nav.navigate(ServiceEditRoute(it)) },
                 onOpenProfile = postNav.openProfile,
                 onOpenChat = openChat,
@@ -136,19 +177,18 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
             ServiceEditScreen(onBack = { nav.popBackStack() }, onSaved = { id, created -> nav.afterSave(ServiceRoute(id), created) })
         }
         composable<HelpRoute> {
-            HelpDetailScreen(onBack = { nav.popBackStack() }, onOpenProfile = postNav.openProfile, onOpenChat = openChat)
+            HelpDetailScreen(onBack = { nav.popAndRefresh() }, onOpenProfile = postNav.openProfile, onOpenChat = openChat)
         }
         composable<HelpEditRoute> {
             HelpEditScreen(onBack = { nav.popBackStack() }, onSaved = { id -> nav.afterSave(HelpRoute(id), created = true) })
         }
-        composable<AlertsRoute> {
-            AlertsScreen(onCreate = { nav.navigate(AlertCreateRoute) }, onOpenProfile = postNav.openProfile, onChanged = root::refreshBadges)
+        composable<AlertsRoute> { entry ->
+            val vm: AlertsViewModel = hiltViewModel()
+            entry.OnRefreshRequest { vm.load(true); root.refreshBadges() }
+            AlertsScreen(onCreate = { nav.navigate(AlertCreateRoute) }, onOpenProfile = postNav.openProfile, onChanged = root::refreshBadges, vm = vm)
         }
         composable<AlertCreateRoute> {
-            AlertCreateScreen(onBack = { nav.popBackStack() }, onDone = {
-                nav.popBackStack()
-                nav.currentBackStackEntry?.savedStateHandle?.set("refresh", true)
-            })
+            AlertCreateScreen(onBack = { nav.popBackStack() }, onDone = { nav.popAndRefresh() })
         }
         composable<ChatsRoute> {
             ChatsScreen(onBack = { nav.popBackStack() }, onOpen = openChat)
@@ -165,20 +205,22 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
         }
 
         composable<SearchRoute> { SearchScreen(postNav, onBack = { nav.popBackStack() }) }
-        composable<PostRoute> { PostDetailScreen(postNav, onBack = { nav.popBackStack() }) }
+        composable<PostRoute> { entry ->
+            val vm: PostDetailViewModel = hiltViewModel()
+            entry.OnRefreshRequest(vm::load)
+            PostDetailScreen(postNav, onBack = { nav.popAndRefresh() }, vm = vm)
+        }
         composable<ComposerRoute> {
-            ComposerScreen(onBack = { nav.popBackStack() }, onDone = {
-                nav.popBackStack()
-                // Refresh whatever list we came back to.
-                nav.currentBackStackEntry?.savedStateHandle?.set("refresh", true)
-            })
+            // Refresh whatever list or post we came back to.
+            ComposerScreen(onBack = { nav.popBackStack() }, onDone = { nav.popAndRefresh() })
         }
 
         composable<MenuRoute> {
             MenuScreen(me, onBack = { nav.popBackStack() }, onNavigate = { nav.navigate(it) }, onSignOut = root::signOut)
         }
-        composable<ProfileRoute> {
+        composable<ProfileRoute> { entry ->
             val postsVm: ProfilePostsViewModel = hiltViewModel()
+            entry.OnRefreshRequest { postsVm.posts.reload(refresh = true) }
             val posts by postsVm.posts.state.collectAsStateWithLifecycle()
             val scope = rememberCoroutineScope()
             val overlays = rememberPostOverlays(postsVm, postNav, scope)
@@ -197,16 +239,15 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
             )
         }
         composable<EditProfileRoute> { EditProfileScreen(onBack = { nav.popBackStack() }) }
-        composable<ModerationRoute> {
-            ModerationScreen(onBack = { nav.popBackStack() }, onReview = { nav.navigate(ReportReviewRoute(it)) })
+        composable<ModerationRoute> { entry ->
+            val vm: ModerationViewModel = hiltViewModel()
+            entry.OnRefreshRequest { vm.load(true) }
+            ModerationScreen(onBack = { nav.popBackStack() }, onReview = { nav.navigate(ReportReviewRoute(it)) }, vm = vm)
         }
         composable<ReportReviewRoute> {
             ReportReviewScreen(
                 onBack = { nav.popBackStack() },
-                onDone = {
-                    nav.popBackStack()
-                    nav.currentBackStackEntry?.savedStateHandle?.set("refresh", true)
-                },
+                onDone = { nav.popAndRefresh() },
                 onOpen = { nav.navigate(it) },
                 onOpenProfile = postNav.openProfile,
             )
@@ -214,11 +255,33 @@ fun NeighborlyNavHost(nav: NavHostController, me: Profile, root: RootViewModel) 
     }
 }
 
-/** After a create/edit form: close it, ask the previous list to refresh, and open the new item. */
-private fun NavHostController.afterSave(detail: Any, created: Boolean) {
+private const val REFRESH = "refresh"
+
+/** Go back and ask the screen we return to to reload (after saves, deletes, status / RSVP changes). */
+private fun NavHostController.popAndRefresh() {
     popBackStack()
-    currentBackStackEntry?.savedStateHandle?.set("refresh", true)
+    currentBackStackEntry?.savedStateHandle?.set(REFRESH, true)
+}
+
+/** After a create/edit form: close it, refresh the previous screen, and open the new item. */
+private fun NavHostController.afterSave(detail: Any, created: Boolean) {
+    popAndRefresh()
     if (created) navigate(detail)
+}
+
+/**
+ * Runs [action] when another screen asked this entry to refresh. The flag lives on the entry's own
+ * savedStateHandle (not the ViewModel's), so it must be observed here.
+ */
+@Composable
+private fun NavBackStackEntry.OnRefreshRequest(action: () -> Unit) {
+    val requested by savedStateHandle.getStateFlow(REFRESH, false).collectAsStateWithLifecycle()
+    LaunchedEffect(requested) {
+        if (requested) {
+            savedStateHandle[REFRESH] = false
+            action()
+        }
+    }
 }
 
 @Composable

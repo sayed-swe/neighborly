@@ -96,9 +96,6 @@ class AlertsViewModel @Inject constructor(
 
     init {
         load()
-        viewModelScope.launch {
-            savedState.getStateFlow("refresh", false).collect { if (it) { savedState["refresh"] = false; load(true); onChanged() } }
-        }
     }
 
     fun load(refresh: Boolean = false) {

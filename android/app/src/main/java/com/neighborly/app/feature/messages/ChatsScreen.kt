@@ -77,7 +77,7 @@ class ChatsViewModel @Inject constructor(
     /** Keeps the inbox live while it's on screen. */
     suspend fun watch() {
         val me = myId ?: return
-        chats.anyNewMessage(me).collect { load() }
+        chats.anyNewMessage(me, onSubscribed = { load() }).collect { load() }
     }
 }
 

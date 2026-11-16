@@ -17,11 +17,12 @@ import javax.inject.Singleton
 
 @Singleton
 class EventRepo @Inject constructor(private val supabase: SupabaseClient) {
-    private val listColumns = Columns.raw(
-        "*, creator:profiles(id, full_name, username, avatar_url), event_participants(user_id, rsvp), $NEIGHBORHOOD_NAME",
-    )
+    // events → profiles is ambiguous (created_by FK, and many-to-many through event_participants),
+    // so the constraint is named explicitly.
+    private val creator = "creator:profiles!events_created_by_fkey(id, full_name, username, avatar_url)"
+    private val listColumns = Columns.raw("*, $creator, event_participants(user_id, rsvp), $NEIGHBORHOOD_NAME")
     private val detailColumns = Columns.raw(
-        "*, creator:profiles(id, full_name, username, avatar_url), " +
+        "*, $creator, " +
             "event_participants(user_id, rsvp, user:profiles(id, full_name, avatar_url)), $NEIGHBORHOOD_NAME",
     )
 

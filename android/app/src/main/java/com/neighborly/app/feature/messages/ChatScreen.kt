@@ -112,11 +112,25 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    /** Realtime: append new rows (dedup by id), mark read while open. */
+    /** Realtime: append new rows (dedup by id), mark read while open; refetch after every (re)join. */
     suspend fun watch() {
-        chats.newMessages(conversationId).collect { m ->
+        chats.newMessages(conversationId, onSubscribed = ::fillGap).collect { m ->
             append(m)
             if (m.senderId != myId) chats.markRead(conversationId)
+        }
+    }
+
+    /** Merges anything sent while the socket was down (Realtime has no replay). */
+    private suspend fun fillGap() {
+        chats.messages(conversationId).onSuccess { fresh ->
+            _state.update { s ->
+                val current = (s.messages as? Load.Data)?.value.orEmpty()
+                val known = current.map { it.id }.toSet()
+                val missing = fresh.filter { it.id !in known }
+                if (missing.isEmpty() && s.messages is Load.Data) s
+                else s.copy(messages = Load.Data((current + missing).sortedBy { it.createdAt }))
+            }
+            chats.markRead(conversationId)
         }
     }
 
