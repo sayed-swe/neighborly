@@ -1,57 +1,24 @@
 package com.neighborly.app.feature.post
 
 import android.net.Uri
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.AddPhotoAlternate
-import androidx.compose.material.icons.outlined.Place
-import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.neighborly.app.R
-import com.neighborly.app.core.designsystem.Avatar
-import com.neighborly.app.core.designsystem.LocalExtraColors
-import com.neighborly.app.core.designsystem.NbTextStyles
-import com.neighborly.app.core.designsystem.SelectField
 import com.neighborly.app.core.location.LocationProvider
 import com.neighborly.app.core.supabase.SessionManager
-import com.neighborly.app.core.util.Format
+import com.neighborly.app.core.util.appResult
 import com.neighborly.app.data.model.Category
 import com.neighborly.app.data.model.Neighborhood
 import com.neighborly.app.data.repository.FeedRepo
 import com.neighborly.app.data.repository.LookupRepo
 import com.neighborly.app.data.repository.NewPost
 import com.neighborly.app.data.repository.StorageRepo
-import com.neighborly.app.feature.common.LocationField
-import com.neighborly.app.feature.common.PhotoField
 import com.neighborly.app.navigation.ComposerRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,6 +68,8 @@ class ComposerViewModel @Inject constructor(
     )
     val state = _state.asStateFlow()
     val me = session.currentProfile
+
+    /** Same check as is_admin() in the database: admins and moderators may post announcements. */
     val isAdmin get() = me?.isModerator == true
 
     init {
@@ -141,7 +110,7 @@ class ComposerViewModel @Inject constructor(
     fun useMyLocation() {
         _state.update { it.copy(locating = true) }
         viewModelScope.launch {
-            com.neighborly.app.core.util.appResult { location.current() }
+            appResult { location.current() }
                 .onSuccess { p -> _state.update { it.copy(latitude = p.lat, longitude = p.lng, locating = false) } }
                 .onFailure { e -> _state.update { it.copy(locating = false, error = e.message) } }
         }
@@ -173,92 +142,9 @@ class ComposerViewModel @Inject constructor(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposerScreen(onBack: () -> Unit, onDone: () -> Unit, vm: ComposerViewModel = hiltViewModel()) {
     val s by vm.state.collectAsStateWithLifecycle()
     LaunchedEffect(s.done) { if (s.done) onDone() }
-    val me = vm.me
-    Scaffold(topBar = {
-        TopAppBar(
-            title = { Text(stringResource(if (s.editing) R.string.composer_edit_title else R.string.composer_title)) },
-            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.action_back)) } },
-            actions = {
-                Button(onClick = vm::submit, enabled = s.canSubmit && !s.busy, modifier = Modifier.padding(end = 8.dp)) {
-                    Text(stringResource(if (s.busy) R.string.posting else if (s.editing) R.string.action_save else R.string.action_post))
-                }
-            },
-        )
-    }) { padding ->
-        Column(
-            Modifier.padding(padding).imePadding().verticalScroll(rememberScrollState()).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Avatar(me?.avatarUrl, me?.fullName, 44.dp)
-                Text(me?.fullName.orEmpty(), style = NbTextStyles.name)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                SelectField(
-                    label = stringResource(R.string.composer_audience),
-                    options = s.neighborhoods,
-                    selected = s.neighborhood,
-                    optionLabel = { "🏘️ ${it.name}" },
-                    onSelect = { n -> vm.edit { copy(neighborhood = n) } },
-                    noneLabel = stringResource(R.string.composer_all_neighborhoods),
-                    modifier = Modifier.weight(1f),
-                )
-                SelectField(
-                    label = stringResource(R.string.composer_category),
-                    options = s.categories,
-                    selected = s.category,
-                    optionLabel = { it.name },
-                    onSelect = { c -> vm.edit { copy(category = c) } },
-                    noneLabel = stringResource(R.string.composer_no_category),
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            if (vm.isAdmin) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(s.announcement, { v -> vm.edit { copy(announcement = v) } })
-                    Text(stringResource(R.string.composer_announcement))
-                }
-                if (s.announcement) {
-                    OutlinedTextField(s.title, { v -> vm.edit { copy(title = v.take(200)) } },
-                        label = { Text(stringResource(R.string.composer_announcement_title)) }, modifier = Modifier.fillMaxWidth())
-                }
-            }
-            OutlinedTextField(
-                value = s.body,
-                onValueChange = { v -> vm.edit { copy(body = v.take(5000)) } },
-                placeholder = { Text(stringResource(R.string.composer_placeholder, Format.firstName(me?.fullName))) },
-                minLines = 5,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            if (s.showPhoto) {
-                PhotoField(s.newPhoto, s.keepImage, onPick = { u -> vm.edit { copy(newPhoto = u) } },
-                    onRemove = { vm.edit { copy(newPhoto = null, keepImage = null) } })
-            }
-            if (s.showLocation) {
-                LocationField(
-                    s.locationName, s.latitude, s.longitude,
-                    onName = { v -> vm.edit { copy(locationName = v) } },
-                    onUseMyLocation = vm::useMyLocation,
-                    onClearCoords = { vm.edit { copy(latitude = null, longitude = null) } },
-                    label = stringResource(R.string.composer_where),
-                    locating = s.locating,
-                )
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.composer_add_to_post), style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
-                IconButton(onClick = { vm.edit { copy(showPhoto = true) } }) {
-                    Icon(Icons.Outlined.AddPhotoAlternate, stringResource(R.string.composer_photo), tint = MaterialTheme.colorScheme.primary)
-                }
-                IconButton(onClick = { vm.edit { copy(showLocation = true) } }) {
-                    Icon(Icons.Outlined.Place, stringResource(R.string.composer_location), tint = LocalExtraColors.current.accent)
-                }
-            }
-            s.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-        }
-    }
+    ComposerContent(s, vm.me, vm.isAdmin, onBack, vm::submit, vm::edit, vm::useMyLocation)
 }

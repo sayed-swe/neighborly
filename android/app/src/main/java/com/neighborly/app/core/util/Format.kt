@@ -63,8 +63,27 @@ object Format {
             "buy" -> "Wanted"
             else -> "Ask price"
         }
-        val nf = NumberFormat.getNumberInstance(Locale.forLanguageTag("en-IN")).apply { maximumFractionDigits = 2 }
-        return "৳" + nf.format(price)
+        return "৳" + indianGrouping(price)
+    }
+
+    /** 1234567.5 → "12,34,567.5" — same as toLocaleString('en-IN'), independent of the JVM's locale data. */
+    fun indianGrouping(value: Double): String {
+        val negative = value < 0
+        val rounded = Math.round(kotlin.math.abs(value) * 100) / 100.0
+        val whole = rounded.toLong()
+        val fraction = Math.round((rounded - whole) * 100).toInt()
+        val digits = whole.toString()
+        val grouped = if (digits.length <= 3) digits else {
+            val head = digits.dropLast(3)
+            val tail = digits.takeLast(3)
+            head.reversed().chunked(2).joinToString(",").reversed() + "," + tail
+        }
+        val frac = when {
+            fraction == 0 -> ""
+            fraction % 10 == 0 -> "." + (fraction / 10)
+            else -> "." + fraction.toString().padStart(2, '0')
+        }
+        return (if (negative) "-" else "") + grouped + frac
     }
 
     fun compact(n: Int?): String {

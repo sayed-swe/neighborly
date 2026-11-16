@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -95,7 +96,9 @@ fun DetailScaffold(
     content: LazyListScope.() -> Unit,
 ) {
     val comments: CommentsViewModel? = commentTarget?.let { hiltViewModel(key = "comments-${it.first}-${it.second}") }
-    if (comments != null && commentTarget != null) remember(commentTarget) { comments.bind(commentTarget.first, commentTarget.second) }
+    if (comments != null && commentTarget != null) {
+        LaunchedEffect(commentTarget) { comments.bind(commentTarget.first, commentTarget.second) }
+    }
     val cs = comments?.state?.collectAsStateWithLifecycle()?.value
     comments?.let { CollectMessages(it.messages) }
 

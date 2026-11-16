@@ -5,7 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import kotlinx.coroutines.flow.Flow
 
 /** A one-off message for the snackbar: either a string resource or text from the server. */
@@ -22,11 +22,11 @@ val LocalSnackbar = staticCompositionLocalOf { SnackbarHostState() }
 @Composable
 fun CollectMessages(messages: Flow<UiMessage>) {
     val host = LocalSnackbar.current
-    val context = LocalContext.current
+    val resources = LocalResources.current
     LaunchedEffect(messages) {
         messages.collect { m ->
             val text = when (m) {
-                is UiMessage.Res -> context.getString(m.id)
+                is UiMessage.Res -> resources.getString(m.id)
                 is UiMessage.Text -> m.text
             }
             host.showSnackbar(text)

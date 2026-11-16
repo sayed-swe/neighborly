@@ -78,7 +78,7 @@ class SignupViewModel @Inject constructor(
         s.fullName.isBlank() -> R.string.err_name_required
         !AuthRepo.USERNAME_REGEX.matches(s.username.trim().lowercase()) -> R.string.err_username
         s.neighborhood == null -> R.string.err_neighborhood
-        !android.util.Patterns.EMAIL_ADDRESS.matcher(s.email.trim()).matches() -> R.string.err_email
+        !AuthRepo.EMAIL_REGEX.matches(s.email.trim()) -> R.string.err_email
         s.password.length < AuthRepo.MIN_PASSWORD -> R.string.err_password
         else -> null
     }

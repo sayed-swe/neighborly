@@ -58,6 +58,7 @@ class AuthRepo @Inject constructor(private val supabase: SupabaseClient) {
 
     companion object {
         val USERNAME_REGEX = Regex("^[a-z0-9_.]{3,30}$")
+        val EMAIL_REGEX = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
         const val MIN_PASSWORD = 8
     }
 }

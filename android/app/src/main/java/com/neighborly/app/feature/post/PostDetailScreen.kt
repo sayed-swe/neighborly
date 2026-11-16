@@ -117,7 +117,7 @@ fun PostDetailScreen(
     val cs by comments.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val overlays = rememberPostOverlays(vm, nav, scope)
-    remember(vm.postId) {
+    LaunchedEffect(vm.postId) {
         comments.onCountChange = vm::bumpComments
         comments.bind(CommentTarget.POST, vm.postId)
     }

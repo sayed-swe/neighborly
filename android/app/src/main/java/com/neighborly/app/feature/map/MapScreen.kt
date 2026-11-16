@@ -263,6 +263,7 @@ private fun OsmMap(s: MapUiState, items: List<MapItem>, onOpen: (Any) -> Unit) {
         lifecycle.addObserver(obs)
         onDispose { lifecycle.removeObserver(obs); map.onDetach() }
     }
+    val myLocationLabel = stringResource(R.string.cd_my_location)
     val iconPx = with(density) { 18.dp.roundToPx() }
     val strokePx = with(density) { 2.dp.roundToPx() }
     AndroidView(
@@ -284,7 +285,7 @@ private fun OsmMap(s: MapUiState, items: List<MapItem>, onOpen: (Any) -> Unit) {
                     position = GeoPoint(me.lat, me.lng)
                     icon = dot(primary, iconPx, strokePx)
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                    title = context.getString(R.string.cd_my_location)
+                    title = myLocationLabel
                 })
             }
             items.forEach { item ->
