@@ -60,11 +60,12 @@ export const getNeighbors = async (neighborhoodId, excludeId, limit = 8) => {
 /* ---------------- feed / posts ---------------- */
 export const PAGE_SIZE = 10
 
-export async function getFeed({ page = 0, neighborhoodId, categoryId, userId, search, near, radiusKm = 3 } = {}) {
+export async function getFeed({ page = 0, neighborhoodId, categoryId, userId, search, near, radiusKm = 3, postType } = {}) {
   let q = supabase.from('feed_posts').select('*').eq('status', 'published')
   if (neighborhoodId) q = q.eq('neighborhood_id', neighborhoodId)
   if (categoryId) q = q.eq('category_id', categoryId)
   if (userId) q = q.eq('user_id', userId)
+  if (postType) q = q.eq('post_type', postType)
   if (search) q = q.or(`body.ilike.%${clean(search)}%,title.ilike.%${clean(search)}%`)
   if (near) {
     const b = boundingBox(near, radiusKm)
@@ -212,6 +213,27 @@ export async function respondToHelp(helpRequestId, message) {
   return check(await supabase.from('help_responses').insert({ help_request_id: helpRequestId, responder_id: me, message }))
 }
 
+/* ---------------- service requests ---------------- */
+const REQUEST_SELECT = `*, service:services(id, service_name, contact_phone, contact_email),
+  requester:profiles!service_requests_requester_id_fkey(id, full_name, username, avatar_url, phone),
+  provider:profiles!service_requests_provider_id_fkey(id, full_name, username, avatar_url, phone)`
+// side: 'requester' (requests I sent) or 'provider' (requests for my services)
+export async function getServiceRequests(side = 'requester') {
+  const me = await uid()
+  return check(await supabase.from('service_requests').select(REQUEST_SELECT)
+    .eq(side === 'provider' ? 'provider_id' : 'requester_id', me).order('created_at', { ascending: false }).limit(100))
+}
+export async function createServiceRequest(values) {
+  const me = await uid()
+  return check(await supabase.from('service_requests').insert({ ...values, requester_id: me }))
+}
+export const updateServiceRequest = async (id, values) => check(await supabase.from('service_requests').update(values).eq('id', id))
+export async function countIncomingRequests() {
+  const me = await uid()
+  const { count } = await supabase.from('service_requests').select('id', { count: 'exact', head: true }).eq('provider_id', me).eq('status', 'pending')
+  return count || 0
+}
+
 /* ---------------- alerts & notifications ---------------- */
 export async function getAlerts({ status = 'active' } = {}) {
   let q = supabase.from('emergency_alerts').select(`*, ${AUTHOR}, neighborhood:neighborhoods(name)`)
@@ -241,9 +263,9 @@ export const getConversations = async () => check(await supabase.rpc('my_convers
 export const startConversation = async (otherUserId) => check(await supabase.rpc('start_conversation', { other_user: otherUserId }))
 export const getMessages = async (conversationId) =>
   check(await supabase.from('messages').select('*').eq('conversation_id', conversationId).order('created_at', { ascending: true }).limit(500))
-export async function sendMessage(conversationId, body) {
+export async function sendMessage(conversationId, body, imageUrl = null) {
   const me = await uid()
-  return check(await supabase.from('messages').insert({ conversation_id: conversationId, sender_id: me, body }).select().single())
+  return check(await supabase.from('messages').insert({ conversation_id: conversationId, sender_id: me, body: body || '', image_url: imageUrl }).select().single())
 }
 export async function markConversationRead(conversationId) {
   const me = await uid()

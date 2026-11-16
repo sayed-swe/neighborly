@@ -121,6 +121,19 @@ export const ADMIN_TABLES = {
       { label: 'Created', render: (r) => when(r.created_at) },
     ],
   },
+  requests: {
+    title: 'Service requests', table: 'service_requests',
+    select: `*, service:services(service_name), requester:profiles!service_requests_requester_id_fkey(${P}), provider:profiles!service_requests_provider_id_fkey(${P})`,
+    search: ['details'],
+    statusField: 'status', statuses: ['pending', 'accepted', 'declined', 'completed', 'cancelled'],
+    columns: [
+      { label: 'Request', render: (r) => main(r.service?.service_name, r.details) },
+      { label: 'Requested by', render: (r) => person(r.requester) },
+      { label: 'Provider', render: (r) => person(r.provider) },
+      { label: 'Phone', render: (r) => <span className="small">{r.contact_phone || '—'}</span> },
+      { label: 'Created', render: (r) => when(r.created_at) },
+    ],
+  },
   alerts: {
     title: 'Emergency alerts', table: 'emergency_alerts', canCreateAlert: true,
     select: `*, author:profiles(${P}), neighborhood:neighborhoods(name)`,

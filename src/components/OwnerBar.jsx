@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Avatar } from './ui'
 import ReportModal from './ReportModal'
+import { t } from '../lib/i18n'
 
 export default function OwnerBar({ person, createdAt, label, reportType, reportId, messageText = 'Message' }) {
   const { profile } = useAuth()
@@ -31,7 +32,7 @@ export default function OwnerBar({ person, createdAt, label, reportType, reportI
       {!mine && (
         <>
           <button className="btn btn-primary btn-sm" onClick={message}><MessageCircle size={15} /> {messageText}</button>
-          {reportType && <button className="btn btn-secondary btn-sm" onClick={() => setReport(true)} aria-label="Report"><Flag size={15} /></button>}
+          {reportType && <button className="btn btn-secondary btn-sm" onClick={() => setReport(true)} aria-label={t('Report')}><Flag size={15} /></button>}
         </>
       )}
       {report && <ReportModal targetType={reportType} targetId={reportId} onClose={() => setReport(false)} />}

@@ -23,7 +23,7 @@ export const STATUS_PILL = {
   available: 'green', reserved: 'amber', sold: 'dark', closed: 'dark',
   open: 'green', in_progress: 'blue', resolved: 'dark', expired: 'dark',
   upcoming: 'green', ongoing: 'blue', completed: 'dark', cancelled: 'red',
-  pending: 'amber', under_review: 'blue', dismissed: 'dark',
+  pending: 'amber', under_review: 'blue', dismissed: 'dark', accepted: 'green', declined: 'red',
 }
 
 // Map marker colours per content kind
@@ -35,6 +35,7 @@ export const MAP_KINDS = {
   listing: { label: 'Buy & sell', color: '#2f6db5' },
   event: { label: 'Events', color: '#b7791f' },
   service: { label: 'Services', color: '#3d7457' },
+  neighbor: { label: 'Neighbors', color: '#0f766e' },
 }
 
 export const kindLink = (kind, id) => ({
@@ -45,4 +46,5 @@ export const kindLink = (kind, id) => ({
   help: `/services?tab=help&item=${id}`,
   alert: '/alerts',
   service: `/services?item=${id}`,
+  neighbor: `/profile/${id}`,
 }[kind] || '/')

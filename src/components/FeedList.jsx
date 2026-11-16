@@ -4,6 +4,7 @@ import { getFeed, PAGE_SIZE } from '../lib/api'
 import { useToast } from '../context/ToastContext'
 import PostCard from './PostCard'
 import { Empty, Spinner } from './ui'
+import { t } from '../lib/i18n'
 
 // Paged, auto-loading list of posts. Change `filters` or `reloadKey` to refresh.
 export default function FeedList({ filters = {}, reloadKey = 0, emptyText }) {
@@ -41,7 +42,7 @@ export default function FeedList({ filters = {}, reloadKey = 0, emptyText }) {
 
   if (loading && posts.length === 0) return <Spinner />
   if (!loading && posts.length === 0) {
-    return <div className="card"><Empty icon={Newspaper} title="Nothing here yet" text={emptyText || 'Be the first to post something for your neighbors.'} /></div>
+    return <div className="card"><Empty icon={Newspaper} title={t('Nothing here yet')} text={emptyText || t('Be the first to post something for your neighbors.')} /></div>
   }
 
   return (
@@ -53,7 +54,7 @@ export default function FeedList({ filters = {}, reloadKey = 0, emptyText }) {
       ))}
       <div ref={sentinel} />
       {loading && <Spinner />}
-      {done && posts.length > 3 && <p className="muted small" style={{ textAlign: 'center', padding: 12 }}>You're all caught up ✨</p>}
+      {done && posts.length > 3 && <p className="muted small" style={{ textAlign: 'center', padding: 12 }}>{t('You\'re all caught up ✨')}</p>}
     </>
   )
 }

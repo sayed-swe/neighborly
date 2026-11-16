@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Avatar, ErrorText, Modal } from './ui'
 import { ImagePicker, LocationField } from './FormBits'
+import { t } from '../lib/i18n'
 
 // The "What's on your mind?" box at the top of the feed
 export function ComposerBox({ onPosted }) {
@@ -15,12 +16,12 @@ export function ComposerBox({ onPosted }) {
     <div className="card composer">
       <div className="composer-top">
         <Avatar src={profile.avatar_url} name={profile.full_name} size={42} />
-        <button className="composer-fake" onClick={() => setOpen('text')}>What's happening around you, {first}?</button>
+        <button className="composer-fake" onClick={() => setOpen('text')}>{t('What\'s happening around you,')} {first}?</button>
       </div>
       <div className="composer-actions">
-        <button onClick={() => setOpen('photo')}><ImagePlus size={20} color="#3d7457" /> Photo</button>
-        <button onClick={() => setOpen('location')}><MapPin size={20} color="#e0663a" /> Location</button>
-        <button onClick={() => setOpen('text')}><Smile size={20} color="#b7791f" /> Feeling / ask</button>
+        <button onClick={() => setOpen('photo')}><ImagePlus size={20} color="#3d7457" /> {t('Photo')}</button>
+        <button onClick={() => setOpen('location')}><MapPin size={20} color="#e0663a" /> {t('Location')}</button>
+        <button onClick={() => setOpen('text')}><Smile size={20} color="#b7791f" /> {t('Feeling / ask')}</button>
       </div>
       {open && <PostModal mode={open} onClose={() => setOpen(null)} onSaved={onPosted} />}
     </div>
@@ -72,7 +73,7 @@ export function PostModal({ mode = 'text', post, onClose, onSaved }) {
       if (isAdmin) values.post_type = announcement ? 'announcement' : 'post'
       if (editing) await updatePost(post.id, values)
       else await createPost(values)
-      toast(editing ? 'Post updated' : 'Posted to your neighborhood')
+      toast(editing ? t('Post updated') : t('Posted to your neighborhood'))
       onSaved?.()
       onClose()
     } catch (e) {
@@ -83,8 +84,8 @@ export function PostModal({ mode = 'text', post, onClose, onSaved }) {
   }
 
   return (
-    <Modal title={editing ? 'Edit post' : 'Create post'} onClose={onClose}
-      footer={<button className="btn btn-primary btn-block" disabled={!canSubmit || busy} onClick={submit}>{busy ? 'Posting…' : editing ? 'Save' : 'Post'}</button>}>
+    <Modal title={editing ? t('Edit post') : t('Create post')} onClose={onClose}
+      footer={<button className="btn btn-primary btn-block" disabled={!canSubmit || busy} onClick={submit}>{busy ? t('Posting…') : editing ? t('Save') : t('Post')}</button>}>
       <ErrorText error={error} />
       <div className="flex gap-12 items-center mb-12">
         <Avatar src={profile.avatar_url} name={profile.full_name} size={44} />
@@ -92,11 +93,11 @@ export function PostModal({ mode = 'text', post, onClose, onSaved }) {
           <div className="bold">{profile.full_name}</div>
           <div className="flex gap-6 mt-8 wrap">
             <select className="select" style={{ width: 'auto', padding: '4px 8px', fontSize: 13 }} value={neighborhoodId} onChange={(e) => setNeighborhoodId(e.target.value)}>
-              <option value="">🌐 All neighborhoods</option>
+              <option value="">{t('🌐 All neighborhoods')}</option>
               {neighborhoods.map((n) => <option key={n.id} value={n.id}>🏘️ {n.name}</option>)}
             </select>
             <select className="select" style={{ width: 'auto', padding: '4px 8px', fontSize: 13 }} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-              <option value="">No category</option>
+              <option value="">{t('No category')}</option>
               {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
@@ -106,11 +107,11 @@ export function PostModal({ mode = 'text', post, onClose, onSaved }) {
       {isAdmin && (
         <label className="flex items-center gap-8 mb-12" style={{ cursor: 'pointer' }}>
           <input type="checkbox" checked={announcement} onChange={(e) => setAnnouncement(e.target.checked)} />
-          <Megaphone size={16} /> <span className="bold small">Post as official announcement</span>
+          <Megaphone size={16} /> <span className="bold small">{t('Post as official announcement')}</span>
         </label>
       )}
       {announcement && (
-        <input className="input mb-12" placeholder="Announcement title" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} />
+        <input className="input mb-12" placeholder={t('Announcement title')} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} />
       )}
 
       <textarea className="composer-textarea" autoFocus placeholder={`What's happening around you, ${profile.full_name.split(' ')[0]}?`}
@@ -120,13 +121,13 @@ export function PostModal({ mode = 'text', post, onClose, onSaved }) {
         <ImagePicker file={file} existingUrl={keepImage}
           onChange={(f) => { setFile(f); if (!f) setKeepImage(null) }} />
       )}
-      {showLoc && <div className="mt-12"><LocationField value={loc} onChange={setLoc} nameLabel="Where is this?" /></div>}
+      {showLoc && <div className="mt-12"><LocationField value={loc} onChange={setLoc} nameLabel={t('Where is this?')} /></div>}
 
       <div className="composer-tools">
-        <span className="bold small">Add to your post</span>
+        <span className="bold small">{t('Add to your post')}</span>
         <div className="tools">
-          <button type="button" className="icon-btn ghost" onClick={() => setShowPhoto(true)} title="Photo"><ImagePlus size={22} color="#3d7457" /></button>
-          <button type="button" className="icon-btn ghost" onClick={() => setShowLoc(true)} title="Location"><MapPin size={22} color="#e0663a" /></button>
+          <button type="button" className="icon-btn ghost" onClick={() => setShowPhoto(true)} title={t('Photo')}><ImagePlus size={22} color="#3d7457" /></button>
+          <button type="button" className="icon-btn ghost" onClick={() => setShowLoc(true)} title={t('Location')}><MapPin size={22} color="#e0663a" /></button>
         </div>
       </div>
     </Modal>

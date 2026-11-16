@@ -19,6 +19,7 @@ export const ADMIN_NAV = [
   { to: '/admin/lost_found', label: 'Lost & found', icon: PackageSearch },
   { to: '/admin/events', label: 'Events', icon: CalendarDays },
   { to: '/admin/services', label: 'Services', icon: Wrench },
+  { to: '/admin/requests', label: 'Service requests', icon: HandHeart },
   { to: '/admin/help', label: 'Help requests', icon: HandHeart },
   { to: '/admin/alerts', label: 'Emergency alerts', icon: AlertTriangle },
   { section: 'Settings' },

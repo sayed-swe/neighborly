@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Loader2, X } from 'lucide-react'
 import { initials, labelize } from '../lib/format'
 import { STATUS_PILL } from '../lib/constants'
+import { t } from '../lib/i18n'
 
 export function Avatar({ src, name, size = 40 }) {
   const [broken, setBroken] = useState(false)
@@ -23,7 +24,7 @@ export function Modal({ title, onClose, children, footer, wide }) {
       <div className={`modal ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true">
         <div className="modal-head">
           <h3>{title}</h3>
-          <button className="icon-btn" onClick={onClose} aria-label="Close"><X size={20} /></button>
+          <button className="icon-btn" onClick={onClose} aria-label={t('Close')}><X size={20} /></button>
         </div>
         <div className="modal-body">{children}</div>
         {footer && <div className="modal-foot">{footer}</div>}

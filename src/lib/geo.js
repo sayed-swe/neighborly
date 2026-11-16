@@ -1,3 +1,4 @@
+import { t } from './i18n'
 // Default map centre: Daffodil Smart City / Ashulia, Dhaka
 export const DEFAULT_CENTER = [23.8768, 90.3209]
 
@@ -13,8 +14,8 @@ export function distanceKm(a, b) {
 
 export function formatDistance(km) {
   if (km == null) return ''
-  if (km < 1) return `${Math.round(km * 1000)} m away`
-  return `${km.toFixed(km < 10 ? 1 : 0)} km away`
+  if (km < 1) return t('{n} m away', { n: Math.round(km * 1000) })
+  return t('{n} km away', { n: km.toFixed(km < 10 ? 1 : 0) })
 }
 
 // Bounding box for a radius search, used with .gte/.lte filters
@@ -26,10 +27,10 @@ export function boundingBox([lat, lng], km) {
 
 export function getCurrentPosition() {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error('Location is not supported in this browser'))
+    if (!navigator.geolocation) return reject(new Error(t('Location is not supported in this browser')))
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve([pos.coords.latitude, pos.coords.longitude]),
-      () => reject(new Error('Could not get your location. Please allow location access.')),
+      () => reject(new Error(t('Could not get your location. Please allow location access.'))),
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
     )
   })

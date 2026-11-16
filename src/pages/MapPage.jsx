@@ -9,6 +9,7 @@ import { timeAgo } from '../lib/format'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Empty, Spinner } from '../components/ui'
+import { t } from '../lib/i18n'
 
 function FlyTo({ center, zoom }) {
   const map = useMap()
@@ -59,7 +60,7 @@ export default function MapPage() {
             <>
               <Circle center={me} radius={radius * 1000} pathOptions={{ color: '#2f5d45', fillColor: '#2f5d45', fillOpacity: 0.06, weight: 1.5 }} />
               <CircleMarker center={me} radius={9} pathOptions={{ color: '#fff', weight: 3, fillColor: '#2f6db5', fillOpacity: 1 }}>
-                <Popup>You are here</Popup>
+                <Popup>{t('You are here')}</Popup>
               </CircleMarker>
             </>
           )}
@@ -68,21 +69,21 @@ export default function MapPage() {
               pathOptions={{ color: '#fff', weight: 2, fillColor: MAP_KINDS[i.kind]?.color, fillOpacity: 0.95 }}>
               <Popup>
                 <div style={{ minWidth: 180 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: MAP_KINDS[i.kind]?.color, textTransform: 'uppercase' }}>{MAP_KINDS[i.kind]?.label}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: MAP_KINDS[i.kind]?.color, textTransform: 'uppercase' }}>{t(MAP_KINDS[i.kind]?.label)}</div>
                   <div style={{ fontWeight: 700, fontSize: 14, margin: '2px 0' }}>{i.title}</div>
                   {i.subtitle && <div style={{ color: '#6f7570' }}>{i.subtitle}</div>}
-                  <Link to={kindLink(i.kind, i.item_id)} style={{ color: '#2f5d45', fontWeight: 700 }}>Open →</Link>
+                  <Link to={kindLink(i.kind, i.item_id)} style={{ color: '#2f5d45', fontWeight: 700 }}>{t('Open →')}</Link>
                 </div>
               </Popup>
             </CircleMarker>
           ))}
         </MapContainer>
         <div className="map-filters">
-          <div className="chips" style={{ background: 'rgba(255,255,255,.95)', padding: 8, borderRadius: 14, boxShadow: 'var(--shadow)', display: 'inline-flex' }}>
+          <div className="chips" style={{ background: 'var(--surface)', padding: 8, borderRadius: 14, boxShadow: 'var(--shadow)', display: 'inline-flex' }}>
             {Object.entries(MAP_KINDS).map(([k, v]) => (
               <button key={k} className={`chip ${kinds.includes(k) ? '' : ''}`} onClick={() => toggle(k)}
                 style={{ opacity: kinds.includes(k) ? 1 : 0.45, borderColor: kinds.includes(k) ? v.color : undefined }}>
-                <span className="map-legend-dot" style={{ background: v.color }} /> {v.label}
+                <span className="map-legend-dot" style={{ background: v.color }} /> {t(v.label)}
               </button>
             ))}
           </div>
@@ -91,20 +92,20 @@ export default function MapPage() {
 
       <aside className="map-side">
         <div className="card-pad" style={{ borderBottom: '1px solid var(--line)' }}>
-          <h3 style={{ fontSize: 18 }}>What's nearby</h3>
-          <p className="small muted mt-8">Everything neighbors pinned on the map — problems, help requests, items and events.</p>
+          <h3 style={{ fontSize: 18 }}>{t('What\'s nearby')}</h3>
+          <p className="small muted mt-8">{t('Everything neighbors pinned on the map — problems, help requests, items and events.')}</p>
           <div className="flex gap-8 mt-12 wrap">
-            <button className="btn btn-primary btn-sm" onClick={locate}><LocateFixed size={15} /> {me ? 'Update my location' : 'Near me'}</button>
+            <button className="btn btn-primary btn-sm" onClick={locate}><LocateFixed size={15} /> {me ? t('Update my location') : t('Near me')}</button>
             {me && (
               <select className="select" style={{ width: 'auto', padding: '4px 8px' }} value={radius} onChange={(e) => setRadius(Number(e.target.value))}>
-                {[0.5, 1, 2, 5, 10].map((r) => <option key={r} value={r}>Within {r} km</option>)}
+                {[0.5, 1, 2, 5, 10].map((r) => <option key={r} value={r}>{t('Within')} {r} {t('km')}</option>)}
               </select>
             )}
-            {me && <button className="btn btn-ghost btn-sm" onClick={() => { setMe(null); setCenter(home) }}>Show all</button>}
+            {me && <button className="btn btn-ghost btn-sm" onClick={() => { setMe(null); setCenter(home) }}>{t('Show all')}</button>}
           </div>
         </div>
         {items === null ? <Spinner /> : visible.length === 0 ? (
-          <Empty icon={MapPin} title="Nothing pinned here" text="Add a location when you post, list an item or raise an alert." />
+          <Empty icon={MapPin} title={t('Nothing pinned here')} text={t('Add a location when you post, list an item or raise an alert.')} />
         ) : (
           <div className="mini-list" style={{ padding: 8 }}>
             {visible.slice(0, 100).map((i) => (
@@ -113,9 +114,9 @@ export default function MapPage() {
                 <span className="map-legend-dot" style={{ background: MAP_KINDS[i.kind]?.color, marginTop: 6 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="t clamp-2">{i.title}</div>
-                  <div className="s">{MAP_KINDS[i.kind]?.label} · {formatDistance(i.km)} · {timeAgo(i.created_at)}</div>
+                  <div className="s">{t(MAP_KINDS[i.kind]?.label)} · {formatDistance(i.km)} · {timeAgo(i.created_at)}</div>
                 </div>
-                <Link to={kindLink(i.kind, i.item_id)} className="small link" onClick={(e) => e.stopPropagation()}>Open</Link>
+                <Link to={kindLink(i.kind, i.item_id)} className="small link" onClick={(e) => e.stopPropagation()}>{t('Open')}</Link>
               </div>
             ))}
           </div>

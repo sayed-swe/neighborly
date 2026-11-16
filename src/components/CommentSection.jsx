@@ -6,6 +6,7 @@ import { timeAgo } from '../lib/format'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Avatar, Spinner } from './ui'
+import { t } from '../lib/i18n'
 
 // target: { post_id } | { listing_id } | { lost_found_id } | { event_id } | { help_request_id }
 export default function CommentSection({ target, onCountChange, autoFocus, placeholder = 'Write a comment…' }) {
@@ -51,7 +52,7 @@ export default function CommentSection({ target, onCountChange, autoFocus, place
   }
 
   const remove = async (c) => {
-    if (!confirm('Delete this comment?')) return
+    if (!confirm(t('Delete this comment?'))) return
     try {
       await deleteComment(c.id)
       const removed = comments.filter((x) => x.id === c.id || x.parent_id === c.id).length
@@ -89,11 +90,11 @@ export default function CommentSection({ target, onCountChange, autoFocus, place
             </div>
             <div className="comment-tools">
               <span>{timeAgo(c.created_at)}</span>
-              <button className={liked ? 'on' : ''} onClick={() => toggleLike(c)}>Like</button>
-              {!isReply && <button onClick={() => startReply(c)}>Reply</button>}
-              {isReply && <button onClick={() => startReply(tree.find((t) => t.id === c.parent_id) || c)}>Reply</button>}
+              <button className={liked ? 'on' : ''} onClick={() => toggleLike(c)}>{t('Like')}</button>
+              {!isReply && <button onClick={() => startReply(c)}>{t('Reply')}</button>}
+              {isReply && <button onClick={() => startReply(tree.find((root) => root.id === c.parent_id) || c)}>{t('Reply')}</button>}
               {likes > 0 && <span>👍 {likes}</span>}
-              {canDelete && <button onClick={() => remove(c)} aria-label="Delete comment"><Trash2 size={12} /></button>}
+              {canDelete && <button onClick={() => remove(c)} aria-label={t('Delete comment')}><Trash2 size={12} /></button>}
             </div>
           </div>
         </div>
@@ -108,13 +109,13 @@ export default function CommentSection({ target, onCountChange, autoFocus, place
     <div className="comments">
       {comments === null ? <Spinner size={18} /> : tree.map((c) => renderComment(c))}
       {replyTo && (
-        <div className="small muted mt-8">Replying to <b>{replyTo.author?.full_name}</b> · <button className="link" onClick={() => { setReplyTo(null); setText('') }}>Cancel</button></div>
+        <div className="small muted mt-8">{t('Replying to')} <b>{replyTo.author?.full_name}</b> · <button className="link" onClick={() => { setReplyTo(null); setText('') }}>{t('Cancel')}</button></div>
       )}
       <form className="comment-form" onSubmit={submit}>
         <Avatar src={profile?.avatar_url} name={profile?.full_name} size={32} />
         <div className="comment-input">
           <input ref={inputRef} placeholder={placeholder} value={text} onChange={(e) => setText(e.target.value)} maxLength={2000} />
-          <button type="submit" disabled={!text.trim() || sending} aria-label="Send"><SendHorizontal size={18} /></button>
+          <button type="submit" disabled={!text.trim() || sending} aria-label={t('Send')}><SendHorizontal size={18} /></button>
         </div>
       </form>
     </div>

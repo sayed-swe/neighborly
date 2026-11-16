@@ -5,6 +5,7 @@ import { appUrl } from '../lib/url'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { Avatar, Modal } from './ui'
+import { t } from '../lib/i18n'
 
 export default function ShareModal({ post, onClose, onShared }) {
   const { profile } = useAuth()
@@ -22,14 +23,14 @@ export default function ShareModal({ post, onClose, onShared }) {
     setBusy(true)
     try {
       await sharePost(original.id, caption.trim(), profile.neighborhood_id)
-      toast('Shared to your feed')
+      toast(t('Shared to your feed'))
       onShared?.()
       onClose()
     } catch (e) { toast(e.message, 'error') } finally { setBusy(false) }
   }
 
   const copy = async () => {
-    try { await navigator.clipboard.writeText(link); toast('Link copied') } catch { toast(link) }
+    try { await navigator.clipboard.writeText(link); toast(t('Link copied')) } catch { toast(link) }
   }
 
   const sendTo = async (c) => {
@@ -40,15 +41,15 @@ export default function ShareModal({ post, onClose, onShared }) {
   }
 
   return (
-    <Modal title="Share" onClose={onClose}>
+    <Modal title={t('Share')} onClose={onClose}>
       <div className="flex gap-12 items-center mb-12">
         <Avatar src={profile.avatar_url} name={profile.full_name} size={42} />
         <div>
           <div className="bold">{profile.full_name}</div>
-          <div className="small muted">Sharing to {profile.neighborhood?.name || 'your feed'}</div>
+          <div className="small muted">{t('Sharing to')} {profile.neighborhood?.name || t('your feed')}</div>
         </div>
       </div>
-      <textarea className="composer-textarea" style={{ minHeight: 70, fontSize: 16 }} placeholder="Say something about this…"
+      <textarea className="composer-textarea" style={{ minHeight: 70, fontSize: 16 }} placeholder={t('Say something about this…')}
         value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={5000} />
       <div className="shared-box" style={{ margin: '6px 0 14px' }}>
         <div className="post-body" style={{ paddingTop: 10 }}>
@@ -57,21 +58,21 @@ export default function ShareModal({ post, onClose, onShared }) {
         </div>
       </div>
       <div className="flex gap-8 wrap">
-        <button className="btn btn-primary" onClick={shareToFeed} disabled={busy}><Repeat2 size={18} /> Share now</button>
-        <button className="btn btn-outline" onClick={copy}><Link2 size={18} /> Copy link</button>
+        <button className="btn btn-primary" onClick={shareToFeed} disabled={busy}><Repeat2 size={18} /> {t('Share now')}</button>
+        <button className="btn btn-outline" onClick={copy}><Link2 size={18} /> {t('Copy link')}</button>
       </div>
 
       {convos.length > 0 && (
         <>
           <div className="divider" />
-          <div className="bold mb-12">Send in Messages</div>
+          <div className="bold mb-12">{t('Send in Messages')}</div>
           <div className="mini-list">
             {convos.slice(0, 6).map((c) => (
               <div key={c.conversation_id} className="mini-item">
                 <Avatar src={c.other_avatar} name={c.other_name} size={36} />
                 <div className="t" style={{ flex: 1 }}>{c.other_name}</div>
                 <button className="btn btn-secondary btn-sm" disabled={sentTo[c.conversation_id]} onClick={() => sendTo(c)}>
-                  <Send size={14} /> {sentTo[c.conversation_id] ? 'Sent' : 'Send'}
+                  <Send size={14} /> {sentTo[c.conversation_id] ? t('Sent') : t('Send')}
                 </button>
               </div>
             ))}

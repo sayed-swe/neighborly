@@ -8,6 +8,7 @@ import { useToast } from '../context/ToastContext'
 import { Avatar, Empty, ErrorText, Field, Modal, Spinner, StatusPill } from '../components/ui'
 import { ImagePicker, LocationField } from '../components/FormBits'
 import CommentSection from '../components/CommentSection'
+import { t } from '../lib/i18n'
 
 export default function Events() {
   const { profile } = useAuth()
@@ -30,16 +31,16 @@ export default function Events() {
   return (
     <div className="page">
       <div className="page-head">
-        <div><h2>Events</h2><p>Clean-ups, meetups, prayers, games — what's on around you.</p></div>
-        <button className="btn btn-primary" onClick={() => setCreating(true)}><Plus size={18} /> Create event</button>
+        <div><h2>{t('Events')}</h2><p>{t('Clean-ups, meetups, prayers, games — what\'s on around you.')}</p></div>
+        <button className="btn btn-primary" onClick={() => setCreating(true)}><Plus size={18} /> {t('Create event')}</button>
       </div>
       <div className="tabs">
-        <button className={`tab ${when === 'upcoming' ? 'active' : ''}`} onClick={() => setWhen('upcoming')}>Upcoming</button>
-        <button className={`tab ${when === 'past' ? 'active' : ''}`} onClick={() => setWhen('past')}>Past</button>
+        <button className={`tab ${when === 'upcoming' ? 'active' : ''}`} onClick={() => setWhen('upcoming')}>{t('Upcoming')}</button>
+        <button className={`tab ${when === 'past' ? 'active' : ''}`} onClick={() => setWhen('past')}>{t('Past')}</button>
       </div>
 
       {events === null ? <Spinner /> : events.length === 0 ? (
-        <div className="card"><Empty icon={CalendarDays} title={when === 'upcoming' ? 'No upcoming events' : 'No past events'} text="Organise something for your neighbors." /></div>
+        <div className="card"><Empty icon={CalendarDays} title={when === 'upcoming' ? t('No upcoming events') : t('No past events')} text={t('Organise something for your neighbors.')} /></div>
       ) : (
         <div className="list">
           {events.map((ev) => {
@@ -59,14 +60,14 @@ export default function Events() {
                   <div className="meta-row">
                     <span><Clock size={13} /> {formatDateTime(ev.starts_at)}</span>
                     <span><MapPin size={13} /> {ev.location}</span>
-                    <span><Users size={13} /> {going} going · {interested} interested</span>
+                    <span><Users size={13} /> {going} {t('going ·')} {interested} {t('interested')}</span>
                   </div>
                   <p className="muted small clamp-2 mt-8">{ev.description}</p>
                 </div>
                 {when === 'upcoming' && (
                   <div className="flex gap-6" style={{ flexDirection: 'column', alignSelf: 'center' }}>
-                    <button className={`btn btn-sm ${mine === 'going' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp(ev, 'going')}><Check size={15} /> Going</button>
-                    <button className={`btn btn-sm ${mine === 'interested' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp(ev, 'interested')}><Star size={15} /> Interested</button>
+                    <button className={`btn btn-sm ${mine === 'going' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp(ev, 'going')}><Check size={15} /> {t('Going')}</button>
+                    <button className={`btn btn-sm ${mine === 'interested' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp(ev, 'interested')}><Star size={15} /> {t('Interested')}</button>
                   </div>
                 )}
               </div>
@@ -96,34 +97,34 @@ function EventDetail({ id, onClose, onChanged }) {
   const rsvp = async (value) => { try { await setRsvp(id, my === value ? null : value); load(); onChanged() } catch (e) { toast(e.message, 'error') } }
   const cancel = async () => { try { await updateEvent(id, { status: 'cancelled' }); load(); onChanged() } catch (e) { toast(e.message, 'error') } }
   const remove = async () => {
-    if (!confirm('Delete this event?')) return
+    if (!confirm(t('Delete this event?'))) return
     try { await deleteEvent(id); onChanged(); onClose() } catch (e) { toast(e.message, 'error') }
   }
 
   return (
-    <Modal title="Event" onClose={onClose} wide>
-      {ev === undefined ? <Spinner /> : ev === null ? <Empty icon={CalendarDays} title="Event not found" /> : (
+    <Modal title={t('Event')} onClose={onClose} wide>
+      {ev === undefined ? <Spinner /> : ev === null ? <Empty icon={CalendarDays} title={t('Event not found')} /> : (
         <>
           {ev.image_url && <img src={ev.image_url} alt="" style={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 12, marginBottom: 14 }} />}
           <div className="small bold" style={{ color: 'var(--accent)', textTransform: 'uppercase' }}>{formatDateTime(ev.starts_at)}{ev.ends_at ? ` – ${formatDateTime(ev.ends_at)}` : ''}</div>
           <h3 style={{ fontSize: 24 }} className="mt-8">{ev.title}</h3>
           <div className="meta-row"><span><MapPin size={14} /> {ev.location}</span>{ev.neighborhood && <span>🏘️ {ev.neighborhood.name}</span>}<StatusPill value={ev.status} /></div>
           <div className="flex gap-8 mt-12 wrap">
-            <button className={`btn ${my === 'going' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp('going')}><Check size={17} /> Going</button>
-            <button className={`btn ${my === 'interested' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp('interested')}><Star size={17} /> Interested</button>
-            {mine && <button className="btn btn-outline" onClick={() => setEditing(true)}>Edit</button>}
-            {mine && ev.status === 'upcoming' && <button className="btn btn-outline" onClick={cancel}>Cancel event</button>}
-            {(mine || isAdmin) && <button className="btn btn-ghost" style={{ color: 'var(--red)' }} onClick={remove}><Trash2 size={16} /> Delete</button>}
+            <button className={`btn ${my === 'going' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp('going')}><Check size={17} /> {t('Going')}</button>
+            <button className={`btn ${my === 'interested' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => rsvp('interested')}><Star size={17} /> {t('Interested')}</button>
+            {mine && <button className="btn btn-outline" onClick={() => setEditing(true)}>{t('Edit')}</button>}
+            {mine && ev.status === 'upcoming' && <button className="btn btn-outline" onClick={cancel}>{t('Cancel event')}</button>}
+            {(mine || isAdmin) && <button className="btn btn-ghost" style={{ color: 'var(--red)' }} onClick={remove}><Trash2 size={16} /> {t('Delete')}</button>}
           </div>
           <p className="mt-16" style={{ whiteSpace: 'pre-wrap' }}>{ev.description}</p>
           <div className="divider" />
           <div className="flex items-center gap-8 mb-12">
-            <span className="bold">Hosted by</span>
+            <span className="bold">{t('Hosted by')}</span>
             <Link to={`/profile/${ev.creator?.username}`} className="flex items-center gap-8"><Avatar src={ev.creator?.avatar_url} name={ev.creator?.full_name} size={28} /> {ev.creator?.full_name}</Link>
           </div>
           {ev.event_participants?.length > 0 && (
             <>
-              <div className="bold mb-12">{ev.event_participants.filter((p) => p.rsvp === 'going').length} going{ev.max_participants ? ` (max ${ev.max_participants})` : ''}</div>
+              <div className="bold mb-12">{ev.event_participants.filter((p) => p.rsvp === 'going').length} {t('going')}{ev.max_participants ? ` (max ${ev.max_participants})` : ''}</div>
               <div className="flex gap-8 wrap mb-12">
                 {ev.event_participants.map((p) => (
                   <span key={p.user_id} title={`${p.user?.full_name} · ${p.rsvp}`}><Avatar src={p.user?.avatar_url} name={p.user?.full_name} size={34} /></span>
@@ -131,8 +132,8 @@ function EventDetail({ id, onClose, onChanged }) {
               </div>
             </>
           )}
-          <div className="bold mt-12">Discussion</div>
-          <CommentSection target={{ event_id: ev.id }} placeholder="Ask the host or say you're coming…" />
+          <div className="bold mt-12">{t('Discussion')}</div>
+          <CommentSection target={{ event_id: ev.id }} placeholder={t('Ask the host or say you\'re coming…')} />
         </>
       )}
     </Modal>
@@ -155,7 +156,7 @@ function EventForm({ event, onClose, onSaved }) {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
   const save = async () => {
-    if (!form.title.trim() || !form.description.trim() || !loc.location_name?.trim()) return setError('Title, description and location are required.')
+    if (!form.title.trim() || !form.description.trim() || !loc.location_name?.trim()) return setError(t('Title, description and location are required.'))
     setBusy(true); setError('')
     try {
       const image_url = file ? await uploadImage(file, 'event') : keep
@@ -168,24 +169,24 @@ function EventForm({ event, onClose, onSaved }) {
       }
       if (event) await updateEvent(event.id, values)
       else await createEvent(values)
-      toast(event ? 'Event updated' : 'Event created')
+      toast(event ? t('Event updated') : t('Event created'))
       onSaved()
     } catch (e) { setError(e.message) } finally { setBusy(false) }
   }
 
   return (
-    <Modal title={event ? 'Edit event' : 'Create event'} onClose={onClose}
-      footer={<><button className="btn btn-ghost" onClick={onClose}>Cancel</button><button className="btn btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button></>}>
+    <Modal title={event ? t('Edit event') : t('Create event')} onClose={onClose}
+      footer={<><button className="btn btn-ghost" onClick={onClose}>{t('Cancel')}</button><button className="btn btn-primary" onClick={save} disabled={busy}>{busy ? t('Saving…') : t('Save')}</button></>}>
       <ErrorText error={error} />
-      <Field label="Cover photo"><ImagePicker file={file} existingUrl={keep} onChange={(f) => { setFile(f); if (!f) setKeep(null) }} /></Field>
-      <Field label="Event name"><input className="input" value={form.title} onChange={set('title')} maxLength={200} /></Field>
+      <Field label={t('Cover photo')}><ImagePicker file={file} existingUrl={keep} onChange={(f) => { setFile(f); if (!f) setKeep(null) }} /></Field>
+      <Field label={t('Event name')}><input className="input" value={form.title} onChange={set('title')} maxLength={200} /></Field>
       <div className="row">
-        <Field label="Starts"><input className="input" type="datetime-local" value={form.starts_at} onChange={set('starts_at')} /></Field>
-        <Field label="Ends (optional)"><input className="input" type="datetime-local" value={form.ends_at} onChange={set('ends_at')} /></Field>
+        <Field label={t('Starts')}><input className="input" type="datetime-local" value={form.starts_at} onChange={set('starts_at')} /></Field>
+        <Field label={t('Ends (optional)')}><input className="input" type="datetime-local" value={form.ends_at} onChange={set('ends_at')} /></Field>
       </div>
-      <LocationField value={loc} onChange={setLoc} nameLabel="Location" placeholder="e.g. Community hall" />
-      <Field label="Details"><textarea className="textarea" value={form.description} onChange={set('description')} maxLength={5000} /></Field>
-      <Field label="Max participants (optional)"><input className="input" type="number" min="1" value={form.max_participants} onChange={set('max_participants')} /></Field>
+      <LocationField value={loc} onChange={setLoc} nameLabel={t('Location')} placeholder={t('e.g. Community hall')} />
+      <Field label={t('Details')}><textarea className="textarea" value={form.description} onChange={set('description')} maxLength={5000} /></Field>
+      <Field label={t('Max participants (optional)')}><input className="input" type="number" min="1" value={form.max_participants} onChange={set('max_participants')} /></Field>
     </Modal>
   )
 }

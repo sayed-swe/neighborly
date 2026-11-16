@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Calendar, Camera, Flag, Home, MapPin, MessageCircle, Pencil, Phone, Tag, UserX } from 'lucide-react'
+import { Calendar, Camera, Flag, Home, MapPin, MessageCircle, Pencil, Phone, Tag, UserX, Wrench } from 'lucide-react'
 import {
   getListings, getNeighborhoods, getProfileByUsername, startConversation, updateProfile, uploadImage,
 } from '../lib/api'
 import { formatDate, formatPrice, labelize } from '../lib/format'
+import { t } from '../lib/i18n'
+import { LocationField } from '../components/FormBits'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import FeedList from '../components/FeedList'
@@ -30,9 +32,10 @@ export default function Profile() {
   }, [tab, person])
 
   if (person === undefined) return <Spinner />
-  if (person === null) return <div className="page"><div className="card"><Empty icon={UserX} title="User not found" /></div></div>
+  if (person === null) return <div className="page"><div className="card"><Empty icon={UserX} title={t('User not found')} /></div></div>
 
   const isMe = person.id === me.id
+  const addressParts = [person.house, person.road, person.moholla, person.ward && `${t('Ward')} ${person.ward}`].filter(Boolean)
 
   const message = async () => {
     try { const id = await startConversation(person.id); navigate(`/messages/${id}`) } catch (e) { toast(e.message, 'error') }
@@ -54,20 +57,20 @@ export default function Profile() {
             <div className="profile-actions">
               {isMe ? (
                 <>
-                  <button className="btn btn-primary" onClick={() => setModal('edit')}><Pencil size={17} /> Edit profile</button>
+                  <button className="btn btn-primary" onClick={() => setModal('edit')}><Pencil size={17} /> {t('Edit profile')}</button>
                 </>
               ) : (
                 <>
-                  <button className="btn btn-primary" onClick={message}><MessageCircle size={17} /> Message</button>
-                  <button className="btn btn-secondary" onClick={() => setModal('report')} aria-label="Report"><Flag size={17} /></button>
+                  <button className="btn btn-primary" onClick={message}><MessageCircle size={17} /> {t('Message')}</button>
+                  <button className="btn btn-secondary" onClick={() => setModal('report')} aria-label={t('Report')}><Flag size={17} /></button>
                 </>
               )}
             </div>
           </div>
           <div className="profile-tabs">
-            <button className={`tab ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>Posts</button>
-            <button className={`tab ${tab === 'about' ? 'active' : ''}`} onClick={() => setTab('about')}>About</button>
-            <button className={`tab ${tab === 'listings' ? 'active' : ''}`} onClick={() => setTab('listings')}>Listings</button>
+            <button className={`tab ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>{t('Posts')}</button>
+            <button className={`tab ${tab === 'about' ? 'active' : ''}`} onClick={() => setTab('about')}>{t('About')}</button>
+            <button className={`tab ${tab === 'listings' ? 'active' : ''}`} onClick={() => setTab('listings')}>{t('Listings')}</button>
           </div>
         </div>
       </div>
@@ -75,26 +78,29 @@ export default function Profile() {
       <div className="page" style={{ paddingTop: 16, maxWidth: 1000 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 340px) minmax(0, 1fr)', gap: 20, alignItems: 'start' }} className="profile-grid">
           <div className="card card-pad">
-            <div className="card-title mb-12">Intro</div>
+            <div className="card-title mb-12">{t('Intro')}</div>
             {person.bio && <p style={{ textAlign: 'center', marginBottom: 12 }}>{person.bio}</p>}
             <div className="list" style={{ gap: 10 }}>
-              {person.neighborhood && <div className="flex gap-8 items-center"><Home size={18} className="muted" /> Lives in <b>{person.neighborhood.name}</b></div>}
+              {person.neighborhood && <div className="flex gap-8 items-center"><Home size={18} className="muted" /> {t('Lives in')} <b>{person.neighborhood.name}</b></div>}
+              {addressParts.length > 0 && <div className="flex gap-8 items-center"><MapPin size={18} className="muted" /> {addressParts.join(', ')}</div>}
               {person.address && <div className="flex gap-8 items-center"><MapPin size={18} className="muted" /> {person.address}</div>}
+              {person.show_on_map && person.latitude != null && <div className="flex gap-8 items-center"><MapPin size={18} color="var(--green-700)" /> <Link to={`/map?lat=${person.latitude}&lng=${person.longitude}`} className="link">{t('See on map')}</Link></div>}
+              {person.role === 'service_provider' && <div className="flex gap-8 items-center"><Wrench size={18} className="muted" /> <Link to="/services" className="link">{t('Service provider')}</Link></div>}
               {person.phone && <div className="flex gap-8 items-center"><Phone size={18} className="muted" /> {person.phone}</div>}
-              <div className="flex gap-8 items-center"><Calendar size={18} className="muted" /> Joined {formatDate(person.created_at, { day: undefined })}</div>
+              <div className="flex gap-8 items-center"><Calendar size={18} className="muted" /> {t('Joined')} {formatDate(person.created_at, { day: undefined })}</div>
             </div>
-            {isMe && <button className="btn btn-secondary btn-block mt-16" onClick={() => setModal('edit')}>Edit details</button>}
+            {isMe && <button className="btn btn-secondary btn-block mt-16" onClick={() => setModal('edit')}>{t('Edit details')}</button>}
           </div>
 
           <div className="flex" style={{ flexDirection: 'column', gap: 16 }}>
             {tab === 'posts' && (
               <>
                 {isMe && <ComposerBox onPosted={() => setReloadKey((k) => k + 1)} />}
-                <FeedList filters={{ userId: person.id }} reloadKey={reloadKey} emptyText={isMe ? 'Share your first post with the neighborhood.' : 'No posts yet.'} />
+                <FeedList filters={{ userId: person.id }} reloadKey={reloadKey} emptyText={isMe ? t('Share your first post with the neighborhood.') : t('No posts yet.')} />
               </>
             )}
             {tab === 'listings' && (
-              listings === null ? <Spinner /> : listings.length === 0 ? <div className="card"><Empty icon={Tag} title="No listings" /></div> : (
+              listings === null ? <Spinner /> : listings.length === 0 ? <div className="card"><Empty icon={Tag} title={t('No listings')} /></div> : (
                 <div className="grid-cards">
                   {listings.map((l) => (
                     <Link key={l.id} to={`/marketplace?item=${l.id}`} className="card item-card">
@@ -108,10 +114,10 @@ export default function Profile() {
             {tab === 'about' && (
               <div className="card card-pad">
                 <div className="list" style={{ gap: 12 }}>
-                  <div><div className="small muted">Full name</div><div className="bold">{person.full_name}</div></div>
-                  <div><div className="small muted">Neighborhood</div><div className="bold">{person.neighborhood?.name || '—'}</div></div>
-                  <div><div className="small muted">Bio</div><div>{person.bio || '—'}</div></div>
-                  {person.gender && <div><div className="small muted">Gender</div><div>{labelize(person.gender)}</div></div>}
+                  <div><div className="small muted">{t('Full name')}</div><div className="bold">{person.full_name}</div></div>
+                  <div><div className="small muted">{t('Neighborhood')}</div><div className="bold">{person.neighborhood?.name || '—'}</div></div>
+                  <div><div className="small muted">{t('Bio')}</div><div>{person.bio || '—'}</div></div>
+                  {person.gender && <div><div className="small muted">{t('Gender')}</div><div>{labelize(person.gender)}</div></div>}
                 </div>
               </div>
             )}
@@ -129,8 +135,10 @@ export default function Profile() {
 function EditProfileModal({ person, onClose, onSaved }) {
   const [form, setForm] = useState({
     full_name: person.full_name || '', username: person.username || '', bio: person.bio || '', phone: person.phone || '',
-    address: person.address || '', neighborhood_id: person.neighborhood_id || '', gender: person.gender || '', date_of_birth: person.date_of_birth || '',
+    address: person.address || '', house: person.house || '', road: person.road || '', moholla: person.moholla || '', ward: person.ward || '', neighborhood_id: person.neighborhood_id || '', gender: person.gender || '', date_of_birth: person.date_of_birth || '',
   })
+  const [loc, setLoc] = useState({ latitude: person.latitude ?? null, longitude: person.longitude ?? null, location_name: '' })
+  const [showOnMap, setShowOnMap] = useState(!!person.show_on_map)
   const [avatar, setAvatar] = useState(null)
   const [cover, setCover] = useState(null)
   const [neighborhoods, setNeighborhoods] = useState([])
@@ -147,52 +155,68 @@ function EditProfileModal({ person, onClose, onSaved }) {
         phone: form.phone.trim() || null, address: form.address.trim() || null,
         neighborhood_id: form.neighborhood_id ? Number(form.neighborhood_id) : null,
         gender: form.gender || null, date_of_birth: form.date_of_birth || null,
+        house: form.house.trim() || null, road: form.road.trim() || null, moholla: form.moholla.trim() || null, ward: form.ward.trim() || null,
+        latitude: loc.latitude, longitude: loc.longitude, show_on_map: showOnMap && loc.latitude != null,
       }
+      if (showOnMap && loc.latitude == null) throw new Error(t('Press "Use my location" to pin your home on the map, or switch the map option off.'))
       if (avatar) values.avatar_url = await uploadImage(avatar, 'avatar')
       if (cover) values.cover_url = await uploadImage(cover, 'cover')
       const p = await updateProfile(person.id, values)
       onSaved(p)
     } catch (e) {
-      setError(e.message.includes('profiles_username_key') ? 'That username is taken.' : e.message)
+      setError(e.message.includes('profiles_username_key') ? t('That username is taken.') : e.message)
     } finally { setBusy(false) }
   }
 
   return (
-    <Modal title="Edit profile" onClose={onClose}
-      footer={<><button className="btn btn-ghost" onClick={onClose}>Cancel</button><button className="btn btn-primary" onClick={save} disabled={busy}>{busy ? 'Saving…' : 'Save'}</button></>}>
+    <Modal title={t('Edit profile')} onClose={onClose}
+      footer={<><button className="btn btn-ghost" onClick={onClose}>{t('Cancel')}</button><button className="btn btn-primary" onClick={save} disabled={busy}>{busy ? t('Saving…') : t('Save')}</button></>}>
       <ErrorText error={error} />
       <div className="row">
-        <Field label="Profile photo">
-          <label className="btn btn-outline"><Camera size={17} /> {avatar ? avatar.name.slice(0, 18) : 'Choose photo'}
+        <Field label={t('Profile photo')}>
+          <label className="btn btn-outline"><Camera size={17} /> {avatar ? avatar.name.slice(0, 18) : t('Choose photo')}
             <input type="file" accept="image/*" hidden onChange={(e) => setAvatar(e.target.files?.[0] || null)} /></label>
         </Field>
-        <Field label="Cover photo">
-          <label className="btn btn-outline"><Camera size={17} /> {cover ? cover.name.slice(0, 18) : 'Choose cover'}
+        <Field label={t('Cover photo')}>
+          <label className="btn btn-outline"><Camera size={17} /> {cover ? cover.name.slice(0, 18) : t('Choose cover')}
             <input type="file" accept="image/*" hidden onChange={(e) => setCover(e.target.files?.[0] || null)} /></label>
         </Field>
       </div>
       <div className="row">
-        <Field label="Full name"><input className="input" value={form.full_name} onChange={set('full_name')} maxLength={100} /></Field>
-        <Field label="Username"><input className="input" value={form.username} onChange={set('username')} maxLength={30} /></Field>
+        <Field label={t('Full name')}><input className="input" value={form.full_name} onChange={set('full_name')} maxLength={100} /></Field>
+        <Field label={t('Username')}><input className="input" value={form.username} onChange={set('username')} maxLength={30} /></Field>
       </div>
-      <Field label="Bio"><textarea className="textarea" style={{ minHeight: 70 }} value={form.bio} onChange={set('bio')} maxLength={500} /></Field>
-      <Field label="Neighborhood">
+      <Field label={t('Bio')}><textarea className="textarea" style={{ minHeight: 70 }} value={form.bio} onChange={set('bio')} maxLength={500} /></Field>
+      <Field label={t('Neighborhood')}>
         <select className="select" value={form.neighborhood_id} onChange={set('neighborhood_id')}>
-          <option value="">Not set</option>
+          <option value="">{t('Not set')}</option>
           {neighborhoods.map((n) => <option key={n.id} value={n.id}>{n.name}{n.city ? `, ${n.city}` : ''}</option>)}
         </select>
       </Field>
+      <Field label={t('Phone')}><input className="input" value={form.phone} onChange={set('phone')} maxLength={20} /></Field>
+      <div className="form-section">{t('My address')}</div>
       <div className="row">
-        <Field label="Phone"><input className="input" value={form.phone} onChange={set('phone')} maxLength={20} /></Field>
-        <Field label="Address"><input className="input" value={form.address} onChange={set('address')} maxLength={255} /></Field>
+        <Field label={t('House / flat')}><input className="input" value={form.house} onChange={set('house')} maxLength={60} /></Field>
+        <Field label={t('Road')}><input className="input" value={form.road} onChange={set('road')} maxLength={120} /></Field>
       </div>
       <div className="row">
-        <Field label="Gender">
+        <Field label={t('Moholla / area')}><input className="input" value={form.moholla} onChange={set('moholla')} maxLength={120} /></Field>
+        <Field label={t('Ward')}><input className="input" value={form.ward} onChange={set('ward')} maxLength={60} /></Field>
+      </div>
+      <Field label={t('More address details')}><input className="input" value={form.address} onChange={set('address')} maxLength={255} /></Field>
+      <div className="form-section">{t('Map location')}</div>
+      <LocationField value={loc} onChange={setLoc} nameLabel={t('Place name')} placeholder={t('e.g. near the mosque')} />
+      <label className="flex gap-8 items-center mt-8" style={{ cursor: 'pointer' }}>
+        <input type="checkbox" checked={showOnMap} onChange={(e) => setShowOnMap(e.target.checked)} />
+        <span>{t('Show me on the neighborhood map so neighbors can connect with me')}</span>
+      </label>
+      <div className="row">
+        <Field label={t('Gender')}>
           <select className="select" value={form.gender} onChange={set('gender')}>
-            <option value="">Prefer not to say</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>
+            <option value="">{t('Prefer not to say')}</option><option value="male">{t('Male')}</option><option value="female">{t('Female')}</option><option value="other">{t('Other')}</option>
           </select>
         </Field>
-        <Field label="Date of birth"><input className="input" type="date" value={form.date_of_birth} onChange={set('date_of_birth')} /></Field>
+        <Field label={t('Date of birth')}><input className="input" type="date" value={form.date_of_birth} onChange={set('date_of_birth')} /></Field>
       </div>
     </Modal>
   )
