@@ -28,6 +28,8 @@
   --green-100: #d5f1ec;
   --green-50: #ecf8f6;
   --on-primary: #ffffff;
+  --btn-primary: #0b5c57;       /* dark teal primary button */
+  --btn-primary-hover: #084742;
 
   --sand: #e1e9eb;
   --sand-ink: #45585d;
@@ -81,6 +83,8 @@
   --green-100: #143d3d;
   --green-50: #112c2d;
   --on-primary: #06231f;
+  --btn-primary: #2dd4bf;       /* dark mode keeps a light teal so the button stays visible */
+  --btn-primary-hover: #5eead4;
 
   --sand: #273a3f;
   --sand-ink: #c2d0d3;
@@ -104,7 +108,8 @@
 }
 
 * { box-sizing: border-box; }
-html, body, #root { height: 100%; }
+html, body { height: 100%; }
+#root { min-height: 100%; }
 body {
   margin: 0;
   background: var(--bg);
@@ -760,3 +765,75 @@ table.data select { border: 1px solid var(--line-strong); border-radius: 6px; pa
 .auth-page .auth-card .btn-primary { height: 44px; font-size: 16px; }
 .auth-page .auth-card h2 { font-size: 26px; font-weight: 800; }
 .auth-page { min-height: calc(100vh - var(--topbar-h)); background: var(--hero); }
+
+
+/* =====================================================================
+   v2.1 — sticky navbar, dark-teal primary buttons, mobile feed polish
+   ===================================================================== */
+body { overflow-x: clip; }
+.nb-header { position: sticky; top: 0; z-index: 60; }       /* stays visible while scrolling, every page */
+.btn-primary { background: var(--btn-primary); color: var(--on-primary); }
+.btn-primary:hover:not(:disabled) { background: var(--btn-primary-hover); }
+.btn-primary:focus-visible { outline: 3px solid var(--green-100); outline-offset: 2px; }
+
+.home-feed, .post, .feed-item { overflow-wrap: anywhere; }
+.post-image, .feed-item img { max-width: 100%; }
+
+@media (max-width: 900px) {
+  :root, [data-theme='dark'] { --topbar-h: 100px; }
+  .nb-actions { height: 56px; }
+  .nb-nav { height: 44px; }
+  .home-grid > aside.right { display: flex; }               /* alerts + services no longer disappear on phones */
+  .home-grid > aside.left { position: sticky; top: var(--topbar-h); z-index: 5; margin: 0 -8px; padding: 0 8px; background: var(--bg); }
+  .home-grid > aside.left .cats { scroll-snap-type: x proximity; padding: 2px 0; }
+  .cat-item { scroll-snap-align: start; min-height: 40px; }
+}
+
+@media (max-width: 700px) {
+  .hero { padding: 22px 14px 20px; }
+  .hero p { font-size: 14.5px; margin-top: 10px; }
+  .hero-search { margin-top: 16px; gap: 10px; }
+  .hero-search .input, .hero-search .select { width: 100%; }
+
+  .home-grid { padding: 10px 8px 56px; gap: 12px; }
+  .home-feed { gap: 12px; }
+  .home-feed > .card, .home-feed > article { border-radius: 12px; }
+  .side-card { padding: 14px; }
+
+  /* post cards */
+  .post-head { padding: 14px 14px 0; margin-bottom: 10px; }
+  .post-body { padding: 0 14px 12px; }
+  .post-body h3, .feed-item h3 { font-size: 16.5px; }
+  .post-location, .shared-box { margin-left: 14px; margin-right: 14px; }
+  .post-image { max-height: 420px; }
+  .post-stats { padding: 8px 14px; font-size: 13.5px; }
+  .post-stats button { font-size: 13.5px; }
+  .post-actions { margin: 0 14px; gap: 2px; }
+  .post-actions > div, .post-action { flex: 1 1 0 !important; min-width: 0; }
+  .post-action { width: 100% !important; justify-content: center; padding: 0 6px; min-height: 44px; font-size: 13px; }
+  .reaction-picker { left: 0; }
+  .comments { margin: 0 14px; }
+  .comment-replies { margin-left: 28px; }
+  .comment-bubble .text { font-size: 14.5px; }
+
+  /* cards for lost & found / buy & sell / help / alerts */
+  .feed-item { padding: 14px; }
+  .feed-item > div:first-child { flex-wrap: wrap; row-gap: 8px; }
+  .feed-item .foot { gap: 8px; }
+  .feed-item .foot .btn { min-height: 40px; flex: 1 1 auto; justify-content: center; }
+  .feed-item .foot > .btn:last-child { margin-left: 0 !important; flex-basis: 100%; }
+
+  /* composer + inputs: 16px stops iOS zooming into fields */
+  .composer { padding: 10px 12px 8px; }
+  .composer-textarea { font-size: 18px; min-height: 96px; }
+  .input, .select, .textarea, .comment-input input, .chat-compose input { font-size: 16px; }
+  .composer-actions button { padding: 8px 4px; font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+  .nb-brand b { font-size: 20px; }
+  .nb-actions { gap: 6px; }
+  .nb-actions .btn { height: 34px; padding: 0 11px; font-size: 13px; }
+  .round-btn { width: 36px; height: 36px; }
+  .post-action svg { width: 17px; height: 17px; }
+}
