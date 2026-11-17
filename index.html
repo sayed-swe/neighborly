@@ -11,9 +11,23 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-        <meta name="color-scheme" content="light dark" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" />
     <script>try{var th=localStorage.getItem('nb-theme')||'system';var r=th==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):th;document.documentElement.dataset.theme=r;var m=document.querySelector('meta[name=theme-color]');if(m)m.content=r==='dark'?'#0d0f12':'#ffffff'}catch(e){}</script>
+    <script>
+      // After a new deploy a cached copy of this page can point at an old script file that no longer exists.
+      // Reload once (the browser then fetches the fresh page) instead of leaving the visitor on an error.
+      window.addEventListener('error', function (e) {
+        var el = e.target;
+        if (!el || el.tagName !== 'SCRIPT' || !el.src) return;
+        try {
+          var last = Number(sessionStorage.getItem('nb-reloaded') || 0);
+          if (Date.now() - last < 60000) return;
+          sessionStorage.setItem('nb-reloaded', String(Date.now()));
+        } catch (err) { return; }
+        location.reload();
+      }, true);
+    </script>
     <script>
       // If the app has not drawn anything after a few seconds, show a message instead of a blank page.
       setTimeout(function () {
