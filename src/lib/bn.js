@@ -323,6 +323,8 @@ export default {
  "Still open": "এখনও খোলা",
  "Submit report": "রিপোর্ট জমা দিন",
  "System follows the light or dark setting of your phone or computer.": "সিস্টেম মানে আপনার ফোন বা কম্পিউটারের লাইট/ডার্ক সেটিং অনুসরণ করা।",
+ "Switch to dark mode": "ডার্ক মোডে যান",
+ "Switch to light mode": "লাইট মোডে যান",
  "Right now: ": "এখন: ",
  "Tell the provider what you need.": "সেবাদাতাকে বলুন আপনার কী দরকার।",
  "Tell us what's wrong. Reports are private — the person won't know who reported them.": "কী সমস্যা জানান। রিপোর্ট গোপন থাকে — কে রিপোর্ট করেছেন তা সংশ্লিষ্ট ব্যক্তি জানবেন না।",

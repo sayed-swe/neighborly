@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { Bell, CheckCheck, LogOut, MessageCircle, Monitor, Moon, Settings as SettingsIcon, ShieldCheck, SquarePen, Sun, User } from 'lucide-react'
+import { Bell, CheckCheck, LogOut, MessageCircle, Moon, Settings as SettingsIcon, ShieldCheck, SquarePen, Sun, User } from 'lucide-react'
 import { getConversations, getNotifications, markAllNotificationsRead, markNotificationRead } from '../lib/api'
 import { timeAgo } from '../lib/format'
 import { t } from '../lib/i18n'
@@ -17,17 +17,16 @@ export const MAIN_NAV = [
   { to: '/map', label: 'Map' },
 ]
 const NOTIF_ICON = { emergency: '🚨', reaction: '👍', comment: '💬', share: '🔁', event: '📅', help_request: '🤝', service: '🛠️', message: '✉️', system: '📣', report: '🛡️' }
-const THEME_ICON = { light: Sun, dark: Moon, system: Monitor }
-const NEXT_THEME = { light: 'dark', dark: 'system', system: 'light' }
 
 // One header for everyone: visitors get Login / Register, members get chats, notifications and their menu.
 export default function Header({ counts = {}, refreshCounts }) {
   const { profile, isAdmin, signOut } = useAuth()
-  const { theme, setTheme, lang, setLang } = useSettings()
+  const { resolved, setTheme, lang, setLang } = useSettings()
   const { pathname } = useLocation()
   const [open, setOpen] = useState(null)
   const ref = useRef(null)
-  const ThemeIcon = THEME_ICON[theme]
+  const goingDark = resolved !== 'dark'   // the button shows the mode you will switch TO
+  const ThemeIcon = goingDark ? Moon : Sun
 
   useEffect(() => setOpen(null), [pathname])
   useEffect(() => {
@@ -52,7 +51,7 @@ export default function Header({ counts = {}, refreshCounts }) {
         <button className="round-btn" onClick={() => setLang(lang === 'en' ? 'bn' : 'en')} title="Language / ভাষা" aria-label="Language" style={{ fontSize: 12.5, fontWeight: 800 }}>
           {lang === 'en' ? 'বাং' : 'EN'}
         </button>
-        <button className="round-btn" onClick={() => setTheme(NEXT_THEME[theme])} title={`${t('Appearance')}: ${t(theme[0].toUpperCase() + theme.slice(1))}`} aria-label="Appearance">
+        <button className="round-btn" onClick={() => setTheme(goingDark ? 'dark' : 'light')} title={t(goingDark ? 'Switch to dark mode' : 'Switch to light mode')} aria-label={t(goingDark ? 'Switch to dark mode' : 'Switch to light mode')}>
           <ThemeIcon size={18} />
         </button>
 
