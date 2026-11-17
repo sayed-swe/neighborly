@@ -29,7 +29,7 @@ export default function RightRail() {
 
       <div className="side-card">
         <h3>{t('📍 Neighbors on the map')}</h3>
-        <p>{t('See who lives near your road and moholla, and what is happening around you.')}</p>
+        <p>{t('See who lives near you, and what is happening around you.')}</p>
         <Link to="/map" className="btn btn-outline btn-block mt-12">{t('Open map')}</Link>
       </div>
 

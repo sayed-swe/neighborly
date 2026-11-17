@@ -864,3 +864,17 @@ body { overflow-x: clip; }
 [data-theme='dark'] ::selection { background: #14b8a6; color: #04201c; }
 [data-theme='dark'] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.9) contrast(.9); }   /* dark map */
 [data-theme='dark'] .leaflet-container { background: #15181c; }
+
+/* =====================================================================
+   v2.4 — simple post box, own-community home, city-corporation address
+   ===================================================================== */
+.simple-composer { padding: 14px 16px; }
+.simple-composer .textarea { min-height: 64px; background: var(--surface-2); border-color: transparent; resize: vertical; }
+.simple-composer .textarea:focus { background: var(--surface); border-color: var(--line-strong); }
+.simple-composer-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; }
+.mb-8 { margin-bottom: 8px; }
+.hero-search .btn { height: 44px; }
+.hero-community { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 14px 0 0; font-size: 14px; color: var(--muted); flex-wrap: wrap; text-align: center; }
+.hero-community b { color: var(--ink); }
+.hero-community a { color: var(--green-700); font-weight: 600; }
+@media (max-width: 520px) { .hide-sm { display: none; } .hero-search .input { width: 100%; flex: 1; } .hero-search { flex-wrap: nowrap; } }

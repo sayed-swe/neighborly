@@ -8,6 +8,7 @@ import {
   getServiceRequests, getServices, respondToHelp, startConversation, updateHelpRequest, updateServiceRequest, uploadImage,
 } from '../lib/api'
 import { t } from '../lib/i18n'
+import { addressLine } from '../lib/address'
 import { HELP_TYPES } from '../lib/constants'
 import { labelize, timeAgo } from '../lib/format'
 import { useAuth } from '../context/AuthContext'
@@ -124,7 +125,7 @@ function RequestForm({ service, onClose }) {
   const { profile } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()
-  const place = [profile.house, profile.road, profile.moholla, profile.ward && `${t('Ward')} ${profile.ward}`].filter(Boolean).join(', ')
+  const place = addressLine(profile)
   const [form, setForm] = useState({ details: '', preferred_time: '', address: place, contact_phone: profile.phone || '' })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -152,7 +153,7 @@ function RequestForm({ service, onClose }) {
         <Field label={t('Preferred time')}><input className="input" value={form.preferred_time} onChange={set('preferred_time')} maxLength={120} placeholder={t('e.g. Tomorrow 5 PM')} /></Field>
         <Field label={t('Your phone')}><input className="input" type="tel" value={form.contact_phone} onChange={set('contact_phone')} maxLength={20} /></Field>
       </div>
-      <Field label={t('Address (house, road, moholla, ward)')}><input className="input" value={form.address} onChange={set('address')} maxLength={255} /></Field>
+      <Field label={t('Address (house, road, thana, city corporation)')}><input className="input" value={form.address} onChange={set('address')} maxLength={255} /></Field>
     </Modal>
   )
 }

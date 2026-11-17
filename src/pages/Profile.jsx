@@ -6,6 +6,7 @@ import {
 } from '../lib/api'
 import { formatDate, formatPrice, labelize } from '../lib/format'
 import { t } from '../lib/i18n'
+import { CITY_CORPORATIONS } from '../lib/address'
 import { LocationField } from '../components/FormBits'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
@@ -35,7 +36,7 @@ export default function Profile() {
   if (person === null) return <div className="page"><div className="card"><Empty icon={UserX} title={t('User not found')} /></div></div>
 
   const isMe = person.id === me.id
-  const addressParts = [person.house, person.road, person.moholla, person.ward && `${t('Ward')} ${person.ward}`].filter(Boolean)
+  const addressParts = [person.house, person.road, person.thana, person.city_corporation, person.postcode].filter(Boolean)
 
   const message = async () => {
     try { const id = await startConversation(person.id); navigate(`/messages/${id}`) } catch (e) { toast(e.message, 'error') }
@@ -135,7 +136,7 @@ export default function Profile() {
 function EditProfileModal({ person, onClose, onSaved }) {
   const [form, setForm] = useState({
     full_name: person.full_name || '', username: person.username || '', bio: person.bio || '', phone: person.phone || '',
-    address: person.address || '', house: person.house || '', road: person.road || '', moholla: person.moholla || '', ward: person.ward || '', neighborhood_id: person.neighborhood_id || '', gender: person.gender || '', date_of_birth: person.date_of_birth || '',
+    address: person.address || '', house: person.house || '', road: person.road || '', thana: person.thana || '', city_corporation: person.city_corporation || '', postcode: person.postcode || '', neighborhood_id: person.neighborhood_id || '', gender: person.gender || '', date_of_birth: person.date_of_birth || '',
   })
   const [loc, setLoc] = useState({ latitude: person.latitude ?? null, longitude: person.longitude ?? null, location_name: '' })
   const [showOnMap, setShowOnMap] = useState(!!person.show_on_map)
@@ -155,7 +156,7 @@ function EditProfileModal({ person, onClose, onSaved }) {
         phone: form.phone.trim() || null, address: form.address.trim() || null,
         neighborhood_id: form.neighborhood_id ? Number(form.neighborhood_id) : null,
         gender: form.gender || null, date_of_birth: form.date_of_birth || null,
-        house: form.house.trim() || null, road: form.road.trim() || null, moholla: form.moholla.trim() || null, ward: form.ward.trim() || null,
+        house: form.house.trim() || null, road: form.road.trim() || null, thana: form.thana.trim() || null, city_corporation: form.city_corporation || null, postcode: form.postcode.trim() || null,
         latitude: loc.latitude, longitude: loc.longitude, show_on_map: showOnMap && loc.latitude != null,
       }
       if (showOnMap && loc.latitude == null) throw new Error(t('Press "Use my location" to pin your home on the map, or switch the map option off.'))
@@ -196,13 +197,19 @@ function EditProfileModal({ person, onClose, onSaved }) {
       <Field label={t('Phone')}><input className="input" value={form.phone} onChange={set('phone')} maxLength={20} /></Field>
       <div className="form-section">{t('My address')}</div>
       <div className="row">
-        <Field label={t('House / flat')}><input className="input" value={form.house} onChange={set('house')} maxLength={60} /></Field>
+        <Field label={t('House / holding no.')}><input className="input" value={form.house} onChange={set('house')} maxLength={60} /></Field>
         <Field label={t('Road')}><input className="input" value={form.road} onChange={set('road')} maxLength={120} /></Field>
       </div>
       <div className="row">
-        <Field label={t('Moholla / area')}><input className="input" value={form.moholla} onChange={set('moholla')} maxLength={120} /></Field>
-        <Field label={t('Ward')}><input className="input" value={form.ward} onChange={set('ward')} maxLength={60} /></Field>
+        <Field label={t('Thana')}><input className="input" value={form.thana} onChange={set('thana')} maxLength={80} /></Field>
+        <Field label={t('Post code')}><input className="input" inputMode="numeric" value={form.postcode} onChange={set('postcode')} maxLength={10} /></Field>
       </div>
+      <Field label={t('City corporation')}>
+        <select className="select" value={form.city_corporation} onChange={set('city_corporation')}>
+          <option value="">{t('Not in a city corporation')}</option>
+          {CITY_CORPORATIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+        </select>
+      </Field>
       <Field label={t('More address details')}><input className="input" value={form.address} onChange={set('address')} maxLength={255} /></Field>
       <div className="form-section">{t('Map location')}</div>
       <LocationField value={loc} onChange={setLoc} nameLabel={t('Place name')} placeholder={t('e.g. near the mosque')} />

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { MapPin } from 'lucide-react'
+import { MapPin, Search } from 'lucide-react'
 import { getAlerts, getHelpRequests, getListings, getLostFound, getNeighborhoods } from '../lib/api'
+import { useAuth } from '../context/AuthContext'
 import { formatPrice, labelize, timeAgo } from '../lib/format'
 import { t } from '../lib/i18n'
 import { ComposerBox } from '../components/Composer'
@@ -23,7 +24,7 @@ export default function Home() {
   const [params, setParams] = useSearchParams()
   const cat = CATEGORIES.some((c) => c.id === params.get('cat')) ? params.get('cat') : 'all'
   const q = params.get('q') || ''
-  const hood = params.get('hood') || ''
+  const { profile } = useAuth()
   const [search, setSearch] = useState(q)
   const [neighborhoods, setNeighborhoods] = useState([])
   const [reloadKey, setReloadKey] = useState(0)
@@ -32,10 +33,12 @@ export default function Home() {
   useEffect(() => { setSearch(q) }, [q])
 
   const update = (changes) => {
-    const next = { cat, q, hood, ...changes }
+    const next = { cat, q, ...changes }
     setParams(Object.fromEntries(Object.entries(next).filter(([k, v]) => v && !(k === 'cat' && v === 'all'))))
   }
-  const hoodId = hood ? Number(hood) : undefined
+  // Everything on the home page is limited to the signed-in person's own community.
+  const hoodId = profile?.neighborhood_id ? Number(profile.neighborhood_id) : undefined
+  const myHood = neighborhoods.find((n) => n.id === hoodId)
 
   return (
     <>
@@ -43,12 +46,14 @@ export default function Home() {
         <h1>{t('Connect with Your Local Neighborhood')}</h1>
         <p>{t('A trusted digital space where nearby residents communicate, share updates, discover services, and solve local problems together.')}</p>
         <form className="hero-search" onSubmit={(e) => { e.preventDefault(); update({ q: search.trim() }) }}>
-          <input className="input" placeholder={t('Search announcements, help requests, items...')} value={search} onChange={(e) => setSearch(e.target.value)} />
-          <select className="select" value={hood} onChange={(e) => update({ hood: e.target.value })} aria-label={t('Neighborhood')}>
-            <option value="">{t('All Neighborhoods')}</option>
-            {neighborhoods.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
-          </select>
+          <input className="input" placeholder={t('Search your community…')} value={search} onChange={(e) => setSearch(e.target.value)} aria-label={t('Search your community…')} />
+          <button className="btn btn-primary" aria-label={t('Search')}><Search size={18} /> <span className="hide-sm">{t('Search')}</span></button>
         </form>
+        <p className="hero-community">
+          <MapPin size={14} /> {hoodId
+            ? <>{t('Showing posts from your community:')} <b>{myHood ? `${myHood.name}${myHood.city ? `, ${myHood.city}` : ''}` : '…'}</b></>
+            : <>{t('Choose your community to see only your neighbors’ posts.')} <Link to={`/profile/${profile?.username}`}>{t('Set my community')}</Link></>}
+        </p>
       </section>
 
       <div className="home-grid">

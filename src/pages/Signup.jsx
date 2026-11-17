@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { getNeighborhoods, getServiceCategories } from '../lib/api'
 import { appUrl } from '../lib/url'
 import { t } from '../lib/i18n'
+import { CITY_CORPORATIONS } from '../lib/address'
 import { ErrorText, Field } from '../components/ui'
 import { LocationField } from '../components/FormBits'
 
@@ -17,7 +18,7 @@ export default function Signup() {
 
   const [form, setForm] = useState({
     full_name: '', username: '', email: '', phone: '', password: '', neighborhood_id: '',
-    house: '', road: '', moholla: '', ward: '',
+    house: '', road: '', thana: '', city_corporation: '', postcode: '',
     service_category_id: '', service_name: '', service_description: '', price_info: '', contact_email: '',
   })
   const [loc, setLoc] = useState({ latitude: null, longitude: null, location_name: '' })
@@ -56,7 +57,7 @@ export default function Signup() {
           username,
           phone: form.phone.trim(),
           neighborhood_id: form.neighborhood_id || null,
-          house: form.house.trim(), road: form.road.trim(), moholla: form.moholla.trim(), ward: form.ward.trim(),
+          house: form.house.trim(), road: form.road.trim(), thana: form.thana.trim(), city_corporation: form.city_corporation, postcode: form.postcode.trim(),
           latitude: hasPin ? String(loc.latitude) : '', longitude: hasPin ? String(loc.longitude) : '',
           show_on_map: hasPin && (isProvider || showOnMap) ? 'true' : 'false',
           ...(isProvider ? {
@@ -132,13 +133,19 @@ export default function Signup() {
             </select>
           </Field>
           <div className="row">
-            <Field label={t('House / flat')}><input className="input" value={form.house} onChange={set('house')} maxLength={60} /></Field>
+            <Field label={t('House / holding no.')}><input className="input" value={form.house} onChange={set('house')} maxLength={60} /></Field>
             <Field label={t('Road')}><input className="input" value={form.road} onChange={set('road')} maxLength={120} /></Field>
           </div>
           <div className="row">
-            <Field label={t('Moholla / area')}><input className="input" value={form.moholla} onChange={set('moholla')} maxLength={120} /></Field>
-            <Field label={t('Ward')}><input className="input" value={form.ward} onChange={set('ward')} maxLength={60} /></Field>
+            <Field label={t('Thana')}><input className="input" value={form.thana} onChange={set('thana')} maxLength={80} /></Field>
+            <Field label={t('Post code')}><input className="input" inputMode="numeric" value={form.postcode} onChange={set('postcode')} maxLength={10} /></Field>
           </div>
+          <Field label={t('City corporation')}>
+            <select className="select" value={form.city_corporation} onChange={set('city_corporation')}>
+              <option value="">{t('Not in a city corporation')}</option>
+              {CITY_CORPORATIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </Field>
           <LocationField value={loc} onChange={setLoc} nameLabel={t('Place name')} placeholder={t('e.g. near the mosque')} />
           {!isProvider && (
             <label className="flex gap-8 items-center mb-12" style={{ cursor: 'pointer' }}>
