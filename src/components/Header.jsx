@@ -27,6 +27,13 @@ export default function Header({ counts = {}, refreshCounts }) {
   const ref = useRef(null)
   const goingDark = resolved !== 'dark'   // the button shows the mode you will switch TO
   const ThemeIcon = goingDark ? Moon : Sun
+  // Default is the device's mode. The button switches to the opposite mode; switching back to the
+  // device's own mode returns to "follow the device" instead of pinning it.
+  const toggleTheme = () => {
+    const target = goingDark ? 'dark' : 'light'
+    const device = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    setTheme(target === device ? 'system' : target)
+  }
 
   useEffect(() => setOpen(null), [pathname])
   useEffect(() => {
@@ -51,7 +58,7 @@ export default function Header({ counts = {}, refreshCounts }) {
         <button className="round-btn" onClick={() => setLang(lang === 'en' ? 'bn' : 'en')} title="Language / ভাষা" aria-label="Language" style={{ fontSize: 12.5, fontWeight: 800 }}>
           {lang === 'en' ? 'বাং' : 'EN'}
         </button>
-        <button className="round-btn" onClick={() => setTheme(goingDark ? 'dark' : 'light')} title={t(goingDark ? 'Switch to dark mode' : 'Switch to light mode')} aria-label={t(goingDark ? 'Switch to dark mode' : 'Switch to light mode')}>
+        <button className="round-btn" onClick={toggleTheme} title={t(goingDark ? 'Switch to dark mode' : 'Switch to light mode')} aria-label={t(goingDark ? 'Switch to dark mode' : 'Switch to light mode')}>
           <ThemeIcon size={18} />
         </button>
 
