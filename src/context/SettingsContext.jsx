@@ -15,6 +15,7 @@ export function SettingsProvider({ children }) {
     const apply = () => {
       const r = theme === 'system' ? (systemDark() ? 'dark' : 'light') : theme
       document.documentElement.dataset.theme = r
+      document.querySelector('meta[name=theme-color]')?.setAttribute('content', r === 'dark' ? '#0d0f12' : '#ffffff')
       setResolved(r)
     }
     apply()

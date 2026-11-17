@@ -11,7 +11,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <script>try{var th=localStorage.getItem('nb-theme')||'system';document.documentElement.dataset.theme=th==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):th}catch(e){}</script>
+        <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" />
+    <script>try{var th=localStorage.getItem('nb-theme')||'system';var r=th==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):th;document.documentElement.dataset.theme=r;var m=document.querySelector('meta[name=theme-color]');if(m)m.content=r==='dark'?'#0d0f12':'#ffffff'}catch(e){}</script>
     <script>
       // If the app has not drawn anything after a few seconds, show a message instead of a blank page.
       setTimeout(function () {

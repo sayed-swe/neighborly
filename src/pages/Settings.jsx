@@ -3,7 +3,7 @@ import { useSettings } from '../context/SettingsContext'
 import { t } from '../lib/i18n'
 
 export default function Settings() {
-  const { theme, setTheme, lang, setLang } = useSettings()
+  const { theme, resolved, setTheme, lang, setLang } = useSettings()
   const themes = [
     { id: 'light', label: 'Light', icon: Sun },
     { id: 'dark', label: 'Dark', icon: Moon },
@@ -22,7 +22,7 @@ export default function Settings() {
             </button>
           ))}
         </div>
-        <p className="hint mt-8">{t('System follows the light or dark setting of your phone or computer.')}</p>
+        <p className="hint mt-8">{t('System follows the light or dark setting of your phone or computer.')} {theme === 'system' && <b>{t('Right now: ')}{t(resolved === 'dark' ? 'Dark' : 'Light')}</b>}</p>
       </div>
 
       <div className="card card-pad">
